@@ -192,8 +192,8 @@
         if($_GET["account_management"] == "login"){
             
 
-            
-            include('/visual/forms/login_form.htm');
+            $dir = dirname(__FILE__); 
+            include($dir.'/forms/login_form.htm');
             
             
         }
@@ -204,8 +204,9 @@
                 
                 $this->register_attempt();
                 
-            }          
-            include("/visual/forms/register_form.htm");
+            }      
+            $dir = dirname(__FILE__);     
+            include($dir."/forms/register_form.htm");
             
         }
         
