@@ -1,0 +1,87 @@
+body {
+    background-color: #c0ebff;
+}
+
+*   { 
+    font-family: "Noto Sans", sans-serif;
+    }
+
+
+#menu{
+    
+    
+    
+}
+
+
+h1 {
+    color: orange;
+    text-align: center;
+}
+
+p {
+    font-family: "Noto Sans", sans-serif;
+    font-size: 20px;
+}
+
+#title{
+    
+    font-family: "Noto Sans", sans-serif;
+    font-size: 45px;
+    
+}
+
+
+#notify{
+    
+	font-family: "Noto Sans", sans-serif;
+    font-size: 28px;
+    
+}
+
+#notify_small{
+    
+	font-family: "Noto Sans", sans-serif;
+    font-size: 22px;
+    
+}
+
+#notify_small2{
+    
+	font-family: "Noto Sans", sans-serif;
+    font-size: 17px;
+    
+}
+
+#notify_small3{
+    
+	font-family: "Noto Sans", sans-serif;
+    font-size: 12px;
+    
+}
+
+#notify_small2_red{
+    
+	font-family: "Noto Sans", sans-serif;
+    font-size: 17px;
+    color: red;
+    
+}
+
+
+#footer{
+    
+    font-family: "Noto Sans", sans-serif;
+    font-size: 16px;
+    color: blue;
+    text-align : center;
+    
+}
+
+#info{
+    
+    font-family: "Noto Sans", sans-serif;
+    font-size : 28px;
+    text-align : center;
+    
+}
