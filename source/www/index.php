@@ -1,5 +1,5 @@
 ﻿<?php
-
+session_start();
 
 require_once("config/config.php");
 require_once("visual/header.html");
@@ -16,6 +16,11 @@ $link = $database_connection->connection();
 
 //$test = new login_module();
 
+
+if(!empty($_SESSION["username"])){
+    echo "<p>WITAJ <b>".$_SESSION["username"]."</b></p>";
+    echo "<p><a href='index.php?account_management=logout'>Wyloguj sie</a></p>";
+}
 if(isset($_GET["account_management"]) && !empty($_GET["account_management"])){
     
     $test = new login_module($link);

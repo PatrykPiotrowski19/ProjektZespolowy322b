@@ -181,6 +181,55 @@
      //Logowanie
      private function login_attempt(){
         
+        $login_empty_username = "<p>Wprowadź swój login</p>";
+        $login_empty_password = "<p>Wprowadź hasło</p>";
+        $login_invalid_login_pass = "<p>Niepoprawny login/haslo bądź podany użytkownik nie istnieje</p>";
+        
+        $errors = 0;
+        echo '<br><br><font id="notify_small2_red">';
+        
+        if(!empty($_POST["login"])){
+            
+
+        }
+        else
+        {
+            echo $login_empty_username;
+            $errors++;
+        }
+        
+        if(!empty($_POST["password"])){
+            
+            
+        }else
+        {
+            echo $login_empty_password;
+            $errors++;
+        }
+        
+        
+        if($errors == 0){
+            
+            $this->username = addslashes($_POST["login"]);
+            $this->password = md5(addslashes($_POST["password"]));
+            
+            
+            $query = mysqli_query($this->link,"SELECT * FROM `users` WHERE `LOGIN` = '".$this->username."' AND `PASSWORD` = '".$this->password."'");
+            
+            $result = mysqli_num_rows($query);
+            
+            if($result > 0){
+                
+                $_SESSION["username"] = $this->username;
+                header('Location: index.php');
+           
+            }
+            else
+            echo $login_invalid_login_pass;
+            
+            
+        }
+        
      }
      
      
@@ -189,11 +238,28 @@
         
         $this->link = $link;
         
+        
+        if($_GET["account_management"] == "logout"){
+            
+            unset($_SESSION["username"]);
+            header('Location: index.php');
+        }
+        
+        
+        
         if($_GET["account_management"] == "login"){
+            
+            
+            if(isset($_POST["submit_login"])){
+                
+                $this->login_attempt();
+            }
             
 
             $dir = dirname(__FILE__); 
             include($dir.'/forms/login_form.htm');
+            
+
             
             
         }
@@ -210,23 +276,8 @@
             
         }
         
-        
      } 
 
-     private function set_variables($option,$link, $username, $password){
-        
-        $this->link = $link;
-        $this->username = addslashes($username);
-        $this->password = md5(addslashes($password));
-        unset($password);
-        
-        switch($option){
-            
-            case 1: login_attempt(); break;
-            case 2: register_attempt(); break;
-            
-        }  
-     } 
     }
 
 ?>
