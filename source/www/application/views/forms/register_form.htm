@@ -1,0 +1,37 @@
+ <div id="wrapper">
+	<form name="login-form" class="login-form" action="/index.php/UserManagement?Register" method="post">
+	
+		<div class="header">
+		<h1>Rejestracja</h1>
+		</div>
+	
+		<div class="content">
+		<input name="login" type="text" class="input username" placeholder="login" />
+		<div class="user-icon"></div>
+		<input name="password" type="password" class="input password" placeholder="hasło" />
+		<div class="pass-icon"></div>	
+		<input name="password2" type="password" class="input password" placeholder="powtórz hasło" /><br /><br />
+        <input name="mail" type="text" class="input username" placeholder="E-mail" /><br /><br />
+        <input name="name" type="text" class="input username" placeholder="Imię" /><br /><br />
+        <input name="surname" type="text" class="input username" placeholder="Nazwisko" />  <br /><br />
+        <input name="adres" type="text" class="input username" placeholder="Adres zamieszkania"/><br /><br />
+        <input name="kod_pocztowy" type="code" class="input username" placeholder="Kod pocztowy"/><br /><br />
+        <input name="miasto" type="code" class="input username" placeholder="Miasto"/><br /><br />
+	   </div>
+
+		<div class="footer">
+        <font style="font-family: Lato,sans-serif; text-align: center; font-size:10px">
+        <input name="regulamin" type="checkbox" />       
+        *Akceptuję <a href="index.php?regulamin">regulamin</a><br />
+        <input name="dane" type="checkbox" />       
+        *Wyrażam zgodę na przetwarzanie danych<br />
+        <input name="newsletter" type="checkbox" />       
+        Chcę otrzymywać newsletter<br />
+        <b>* - wymagane pola</b><br /><br />
+		<input type="submit" name="submit_register" value="Zarejestruj się" class="button" />
+        </font>
+		</div>
+	
+	</form>
+
+</div>

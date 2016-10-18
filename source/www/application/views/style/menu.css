@@ -1,0 +1,32 @@
+#kontener {width: 1280px; margin: 0 auto;}
+#menu {display: table; padding: 0 10px 0; margin: 0 auto; overflow: hidden; font-size: 21px; background: #242424;}
+#menu li {list-style-type: none; margin: 0 auto; float: left; }
+#menu li:hover {background: #404040;}
+#menu li a {display: block; color: silver; text-decoration: none; padding: 7px 10px 7px;}
+#menu li a:hover {background: #404040; color: white;}
+#menu li li a {width: 180px; font-size:12px}
+#menu li ul {overflow: hidden; display: none; background: #242424;}
+#menu li:hover ul {position: absolute; padding: 0; display: block; width: 180px;}
+ 
+/*ANIMACJA - tylko CSS3*/
+#menu *:hover {transition: 0.4s ease-in;}
+ 
+/*ZAOKR¥GLONE ROGI - tylko CSS3*/
+#menu {border-radius: 3px;}
+#menu li ul {border-radius: 0 0 3px 3px;}
+
+
+
+
+
+#display {color:white; padding: 0 50px 0; width:1020px; margin: 50px auto; font-size: 21px; background: #272727; }
+#display p {list-style-type: none; color: silver; margin: 0 auto; }
+#head {list-style-type: none; color: silver; font-size: 28px; padding: 20px 0px 0; }
+#display p a {display: block; color: silver; text-decoration: none; padding: 7px 10px 7px;}
+#display p a:hover {background: #404040; color: white;}
+#display p p a {width: 180px; font-size:12px}
+#display p p {overflow: hidden; display: none; background: #242424;}
+#display p:hover ul {position: absolute; padding: 0; display: block; width: 180px;}
+
+#display {border-radius: 3px;}
+#display p ul {border-radius: 0 0 3px 3px;}
