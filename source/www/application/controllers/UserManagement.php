@@ -20,6 +20,7 @@ class UserManagement extends CI_Controller{
 		if(isset($_GET["Logout"])){
 
 			unset($_SESSION["username"]);
+			echo "<p>Wylogowano sie</p>";
 		}
 
 
@@ -44,6 +45,7 @@ class UserManagement extends CI_Controller{
 	private function profile_management(){
 
 		echo "Witaj ".$_SESSION["username"];
+		echo "<p><a href=/index.php/UserManagement?Logout>Wyloguj się</a></p>";
 
 	}
 
@@ -53,8 +55,8 @@ class UserManagement extends CI_Controller{
 
 
 
-		$register_empty_username = "<p>Nazwa użytkownika nie może być pusta.</p>";
-        $register_empty_password = "<p>Hasło nie może być puste.</p>";
+		$register_empty_username = "<p>Nazwa użytkownika nie może być pusta</p>";
+        $register_empty_password = "<p>Hasło nie może być puste</p>";
         $register_different_password = "<p>Hasła się od siebie różnią</p>";
         $register_password_short = "<p>Wpisane hasło jest za krótkie (minimum 6 znaków)</p>";
         $register_username_short = "<p>Wpisana nazwa użytkownika jest za krótka (minimum 6 znaków)<p>";
@@ -252,7 +254,8 @@ class UserManagement extends CI_Controller{
 		            
 		            
 		            $query = $this->db->query("SELECT * FROM `users` WHERE `LOGIN` = '".$this->username."' AND `PASSWORD` = '".$this->password."'");
-		            
+
+
 		            if($query->num_rows() > 0){
 		                
 		                $_SESSION["username"] = $this->username;
@@ -261,11 +264,17 @@ class UserManagement extends CI_Controller{
 		            }
 		            else
 		            {
-		            	$arguments['login_invalid_login_pass'] = $login_invalid_login_pass;
-		            	$this->load->view('forms_error', $arguments);
+		         		$arguments['login_invalid_login_pass'] = $login_invalid_login_pass;
+		         		$this->load->view('forms_error', $arguments);
 		            }
+
 		            
 		        }
+		        else
+		            {
+
+		            	$this->load->view('forms_error', $arguments);
+		            }
 		        
 
 

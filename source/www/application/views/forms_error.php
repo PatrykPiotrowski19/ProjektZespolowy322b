@@ -1,3 +1,5 @@
+<div id="notify_small2_red">
+
 <?php 
 
 
@@ -35,3 +37,5 @@ if(isset($login_invalid_login_pass))
 	echo $login_invalid_login_pass;
 
  ?>
+
+ </div>
