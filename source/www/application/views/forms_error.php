@@ -36,6 +36,15 @@ if(isset($login_empty_password))
 if(isset($login_invalid_login_pass))
 	echo $login_invalid_login_pass;
 
+if(isset($register_invalid_mail))
+	echo $register_invalid_mail;
+
+if(isset($reset_password_empty))
+	echo $reset_password_empty;
+
+if(isset($reset_password_invalid_mail))
+	echo $reset_password_invalid_mail;
+
  ?>
 
  </div>

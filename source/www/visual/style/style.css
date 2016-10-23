@@ -1,0 +1,77 @@
+body {
+    background-color: #c0ebff;
+}
+
+*   { 
+    }
+
+
+#menu{
+    
+    
+    
+}
+
+
+h1 {
+    color: orange;
+    text-align: center;
+}
+
+p {
+    font-size: 20px;
+}
+
+#title{
+    
+    font-size: 45px;
+    
+}
+
+
+#notify{
+    
+    font-size: 28px;
+    
+}
+
+#notify_small{
+    
+    font-size: 22px;
+    
+}
+
+#notify_small2{
+    
+    font-size: 17px;
+    
+}
+
+#notify_small3{
+    
+    font-size: 12px;
+    
+}
+
+#notify_small2_red{
+    
+    font-size: 17px;
+    color: red;
+    
+}
+
+
+#footer{
+    
+    font-size: 16px;
+    color: blue;
+    text-align : center;
+    
+}
+
+#info{
+    
+    font-size : 28px;
+    text-align : center;
+    
+}
