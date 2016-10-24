@@ -2,7 +2,7 @@
 #menu {display: table; padding: 0 10px 0; margin: 0 auto; overflow: hidden; font-size: 21px; background: #242424;}
 #menu li {list-style-type: none; margin: 0 auto; float: left; }
 #menu li:hover {background: #404040;}
-#menu li a {display: block; color: silver; text-decoration: none; padding: 7px 10px 7px;}
+#menu li a {display: block; color: silver; text-decoration: none; padding: 7px 0px 7px;}
 #menu li a:hover {background: #404040; color: white;}
 #menu li li a {width: 180px; font-size:15px}
 #menu li ul {overflow: hidden; display: none; background: #242424;}

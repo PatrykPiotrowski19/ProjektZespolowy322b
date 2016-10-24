@@ -19,7 +19,6 @@ h1 {
 }
 
 p {
-    font-size: 20px;
 }
 
 #title{
@@ -55,11 +54,24 @@ p {
 
 #notify_small2_red{
     
-    font-size: 17px;
+    font-size: 14px;
     color: red;
     
 }
 
+#notify_small2_green{
+    
+    font-size: 14px;
+    color: green;
+    
+}
+
+#notify_small_green{
+    
+    font-size: 23px;
+    color: green;
+    
+}
 
 #footer{
     
