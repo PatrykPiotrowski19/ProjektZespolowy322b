@@ -2,6 +2,9 @@
 
 <?php
 
+if(isset($activation_success))
+	echo $activation_success;
+
 if(isset($account_created))
 	echo $account_created;
 

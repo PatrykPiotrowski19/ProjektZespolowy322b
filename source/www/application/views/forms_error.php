@@ -3,6 +3,12 @@
 <?php 
 
 
+if(isset($activation_invalid_token))
+	echo $activation_invalid_token;
+
+if(isset($login_unactive))
+	echo $login_unactive;
+
 if(isset($username_short))
 	echo $username_short;
 

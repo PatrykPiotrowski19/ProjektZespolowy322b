@@ -20,10 +20,12 @@ class UserManagement extends CI_Controller{
 			
 		}
 		
+
 		
 		if(isset($_SESSION["username"])){
 
 			$this->profile_management();
+
 
 
 
@@ -61,6 +63,12 @@ class UserManagement extends CI_Controller{
 
 				$this->register_attempt();
 			}
+
+
+			if(isset($_GET["activation"])){
+
+				$this->activate_user();
+			}
 	}
 
 	}
@@ -94,7 +102,7 @@ class UserManagement extends CI_Controller{
 				//etap walidacji
 				if($_POST["password"] == $_POST["password2"]){
 
-       			require_once("ValidateModule\ValidateModule.php");
+       			require_once("ValidateModule/ValidateModule.php");
 				$validate_class = new RegisterValidate();
 
 	 			if($validate_class->ValidatePassword(addslashes($_POST["password"]))){
@@ -271,7 +279,7 @@ class UserManagement extends CI_Controller{
         $register_different_password = "<p>Wpisane hasła różnią się od siebie</p>";
         $register_password_short = "<p>Wpisane hasło nie spełnia wymagań (długość 8-32 znaków, co najmniej jedna duża litera, cyfra oraz znak specjalny)</p>";
         $register_username_short = "<p>Wpisana nazwa użytkownika nie spełnia wymagań (długość 6-12 znaków, małe litery, brak polskich znaków)<p>";
-        $register_succeess = "<p>Twoje konto zostało utworzone pomyślnie, możesz się teraz na nie zalogować</p>";
+        $register_succeess = "<p>Twoje konto zostało utworzone pomyślnie, na maila otrzymasz link z aktywacją konta</p>";
         $register_mail_busy = "<p>Konto z tym adresem e-mail jest już zarejestrowane</p>";
         $register_name_error = "<p>Pole imię nie spełnia wymagań (długość 1-12 znaków)</p>";
         $register_surname_error = "<p>Pole nazwisko nie spełnia wymagań (długość 1-24 znaków)</p>";
@@ -299,7 +307,7 @@ class UserManagement extends CI_Controller{
          if(isset($_POST["submit_register"])){
 
 
-        require_once("ValidateModule\ValidateModule.php");
+        require_once("ValidateModule/ValidateModule.php");
 
 		$validate_class = new RegisterValidate();
 
@@ -448,6 +456,35 @@ class UserManagement extends CI_Controller{
 				            
 				            
 				            $arguments['account_created'] = $register_succeess;
+
+				            $activation_code = $this->username.md5(rand()).rand(1,10000);
+
+				            $date = new DateTime();
+				            $expration_time = $date->getTimestamp() + 24*3600*7; 
+
+
+				            $query = $this->db->query("SELECT * from `users` WHERE `LOGIN` = '".$this->username."';");
+
+				            foreach ($query->result() as $row)
+				            	$user_id = $row->ID;
+
+
+				            $this->db->query("INSERT INTO `activation` (`ID`, `user_id`, `code`, `expiration_time`) VALUES (NULL, '".$user_id."', 
+				            	'".$activation_code."', '".$expration_time."');");
+
+
+				            $this->load->library('email');
+							$this->email->set_mailtype("html");
+
+							$this->email->from('noreply@sklepinternetowy.pl', 'Sklep internetowy');
+							$this->email->to($row->ADDRESS_TAB2);
+
+							$this->email->subject('Aktywacja konta');
+							$this->email->message('Witaj <b>'.$row->LOGIN.'</b>.<br>Zakończenie procesu rejestracji: <i>http://322b.esy.es/index.php/UserManagement?activation='.$activation_code.'</i><br>Po 7 dniach link wygasa a konto zostaje usunięte.<br>');
+
+							$this->email->send();
+
+
 				          	$this->load->view('forms_info', $arguments);
 				        }
 				        else
@@ -473,6 +510,7 @@ class UserManagement extends CI_Controller{
 				$login_empty_username = "<p>Wprowadź swój login</p>";
 		        $login_empty_password = "<p>Wprowadź hasło</p>";
 		        $login_invalid_login_pass = "<p>Niepoprawny login/haslo bądź podany użytkownik nie istnieje</p>";
+		        $login_unactive = "<p>Musisz aktywować swoje konto, link z aktywacją konta został wysłany na twoją skrzynkę pocztową</p>";
 		        
 		        $errors = 0;
 
@@ -504,11 +542,24 @@ class UserManagement extends CI_Controller{
 		            
 		            $query = $this->db->query("SELECT * FROM `users` WHERE `LOGIN` = '".$this->username."' AND `PASSWORD` = '".$this->password."'");
 
-
+		            //Jezeli warunki zostały spełnione
 		            if($query->num_rows() > 0){
 		                
-		                $_SESSION["username"] = $this->username;
-		                header('Location: /index.php/UserManagement?Profile&LoginSuccess');
+
+						foreach ($query->result() as $row)
+							$status = $row->registered;
+
+						if($status){
+		               			$_SESSION["username"] = $this->username;
+		               			header('Location: /index.php/UserManagement?Profile&LoginSuccess');
+			            }
+			            else
+			            	//Konto nie jest aktywne
+			            {
+			            	$arguments['login_unactive'] = $login_unactive;
+			            	$this->load->view('forms_error', $arguments);
+
+			            }
 		           
 		            }
 		            else
@@ -535,6 +586,62 @@ class UserManagement extends CI_Controller{
 		}
 
 
+	private function activate_user(){
+
+		$token = addslashes($_GET["activation"]);
+
+		$query = $this->db->query("SELECT * FROM `activation` WHERE `code` = '".$token."'");
+		$activation_invalid_token = "<p>Nieprawidłowy klucz aktywacji albo link już wygasł</p>"; 
+		$activation_success = "<p>Aktywacja przebiegła pomyślnie, możesz teraz się zalogować</p>";
+
+		if($query->num_rows() > 0){ 
+
+			foreach ($query->result() as $row) 
+			{
+				$user_id = $row->user_id;
+				$exp_time = $row->expiration_time;
+			}
+
+		$date = new DateTime();
+
+		if($date->getTimestamp() > $exp_time){
+
+
+			//usuwa rekord + uzytkownika - link wygasł
+			$this->db->query("DELETE FROM `activation` WHERE `code` = '".$token."';");
+			$this->db->query("DELETE FROM `users` WHERE `ID` = ".$user_id."");
+
+
+
+			$arguments['activation_invalid_token'] = $activation_invalid_token;
+			$this->load->view('forms_error', $arguments);
+
+
+			}
+			else
+			//aktywacja konta	
+			{
+			$this->db->query("DELETE FROM `activation` WHERE `code` = '".$token."';");
+			$this->db->query("UPDATE  `users` SET  `registered` =  '1' WHERE  `ID` = ".$user_id.";");
+
+
+			$arguments['activation_success'] = $activation_success;
+			$this->load->view('forms_info',$arguments);
+
+			$this->load->view("forms/login_form.php");
+			}
+
+		}
+		//Jezeli nieprawidlowy token
+		else
+		{
+			$arguments['activation_invalid_token'] = $activation_invalid_token;
+			$this->load->view('forms_error', $arguments);
+
+
+		}
+
+	}
 
 
 }
