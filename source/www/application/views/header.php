@@ -1,6 +1,8 @@
 <?php
 
 $this->load->library('session');
+$this->load->database();
+
 
 ?>
 
@@ -19,25 +21,37 @@ $this->load->library('session');
 <body style="height: 100%;  font-family: Lato,sans-serif; text-align: center; font-size:16px">
 <div id="menu" ><a href="/index.php"><img src="/visual/img/logo.png" align="left" height="50px" width="320px"></img></a>
  <ol>
-    <li><a href="#">Produkty</a>
+
+ <?php
+            $query = $this->db->query("SELECT * FROM `category`");
+
+
+
+            foreach ($query->result() as $row){
+
+
+         
+echo '<li><a href="#">'.$row->name.'</a>';
+
+ ?>
+   
       <ul>
-        <li><a href="#">link - 1</a></li>
-        <li><a href="#">link - 2</a></li>
-        <li><a href="#">link - 3</a></li>
-        <li><a href="#">link - 4</a></li>
-        <li><a href="#">link - 5</a></li>
+<?php
+          $query2 = $this->db->query("SELECT * from `subcategory` WHERE `category_id` = ".$row->ID." order by `ID`");
+
+          foreach($query2->result() as $row2){
+
+            echo '<li><a href="#">'.$row2->name.'</a></li>';
+          }
+
+  ?>
       </ul>
     </li>
 
-    <li><a href="#">menu - 2</a>
-      <ul>
-        <li><a href="#">link - 1</a></li>
-        <li><a href="#">link - 2</a></li>
-        <li><a href="#">link - 3</a></li>
-      </ul>
-    </li>
-  </ol>
-  
+<?php
+   }
+    
+?>
 <ol id="account">
 <li><a href="#"><?php
 if(isset($_SESSION["username"]) && !empty($_SESSION["username"])){
@@ -45,7 +59,9 @@ if(isset($_SESSION["username"]) && !empty($_SESSION["username"])){
 }
 else
 	echo "Konto";
-?></a>
+?>
+  
+</a>
       <ul>
 	  <?php
 	  if(isset($_SESSION["username"]) && !empty($_SESSION["username"])){

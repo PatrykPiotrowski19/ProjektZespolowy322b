@@ -15,6 +15,7 @@
         $register_empty_password = "<p>Hasło nie może być puste</p>";
         $register_different_password = "<p>Wpisane hasła różnią się od siebie</p>";
         $password_short2 = "<p>Wpisane hasło nie spełnia wymagań (długość 8-32 znaków, co najmniej jedna duża litera, cyfra oraz znak specjalny)</p>";
+
         $username_short2 = "<p>Wpisana nazwa użytkownika nie spełnia wymagań (długość 6-12 znaków, małe litery, brak polskich znaków)<p>";
 
 		$login_empty_username2 = "<p>Wprowadź swój login</p>";
@@ -25,7 +26,11 @@
 		$activation_invalid_token2 = "<p>Nieprawidłowy klucz aktywacji albo link już wygasł</p>"; 
 
 		$reset_invalid_token2 = "<p>Nieprawidłowy link resetowania hasła albo już wygasł</p>";
+        $invalid_product_info = "<p>Podany towar nie istnieje</p>";
 
+
+if(isset($invalid_product))
+	echo $invalid_product_info;
 
 if(isset($activation_invalid_token))
 	echo $activation_invalid_token2;
