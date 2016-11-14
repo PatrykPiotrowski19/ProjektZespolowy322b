@@ -84,12 +84,6 @@ class UserManagement extends CI_Controller{
 
 	private function reset_password2(){
 
-		$password_empty = "<p>Hasło nie może być puste</p>";
-		$reset_different_password = "<p>Wpisane hasła różnią się od siebie</p>";
-		$reset_password_short = "<p>Wpisane hasło nie spełnia wymagań (długość 8-32 znaków, co najmniej jedna duża litera, cyfra oraz znak specjalny)</p>";
-		$reset_invalid_token = "<p>Nieprawidłowy link resetowania hasła albo już wygasł</p>";
-		$reset_token_expired = "<p>Link resetowania hasła już wygasł</p>";
-		$reset_complete = "<p>Hasło zostało pomyślnie zmienione</p>";
 
 		if(isset($_POST["submit_reset_password"])){
 			$errors = 0;
@@ -113,21 +107,21 @@ class UserManagement extends CI_Controller{
 					else
 					{
 						$errors++;
-						$arguments["password_short"] = $reset_password_short;
+						$arguments["password_short"] = true;
 
 					}
 				}
 				else
 				{
 					$errors++;
-					$arguments["password_differents"] = $reset_different_password;
+					$arguments["password_differents"] = true;
 
 				}
 			}
 			else
 			{
 				$errors++;
-				$arguments["password_empty"] = $password_empty;
+				$arguments["password_empty"] = true;
 			}
 
 			if($errors == 0){	
@@ -136,7 +130,7 @@ class UserManagement extends CI_Controller{
 
 				if($query->num_rows() == 0){
 
-                  $arguments['reset_invalid_token'] = $reset_invalid_token;
+                  $arguments['reset_invalid_token'] = true;
 				  $errors++;
 
 
@@ -148,7 +142,7 @@ class UserManagement extends CI_Controller{
 					$expiration_time = $date->getTimestamp();
 
 					if($row->EXPIRATION_TIME < $expiration_time){
-                  		$arguments['reset_invalid_token'] = $reset_invalid_token;
+                  		$arguments['reset_invalid_token'] = true;
 						$this->load->view("forms_error.php",$arguments);
 						$query3 = $this->db->query("DELETE FROM `password_reset` WHERE `code` = '".addslashes($_POST["token_pass"])."';");
 					}
@@ -156,7 +150,7 @@ class UserManagement extends CI_Controller{
 					{
 						$password = md5(addslashes($_POST["password"]));
 						$query2 = $this->db->query("UPDATE `users` SET `PASSWORD` = '".$password."' WHERE `users`.`ID` = ".$row->USER_ID.";");
-						$arguments["reset_complete"] = $reset_complete;
+						$arguments["reset_complete"] = true;
 						$this->load->view("forms_info.php",$arguments);
 						$query3 = $this->db->query("DELETE FROM `password_reset` WHERE `password_reset`.`USER_ID` = ".$row->USER_ID.";");
 					}
@@ -183,9 +177,7 @@ class UserManagement extends CI_Controller{
 	private function reset_password(){
 
 			$errors = 0;
-			$reset_password_empty = "<p>Uzupełnij pole e-mail</p>";
 			$reset_password_invalid_mail = "<p>Niepoprawny mail</p>";
-			$reset_password_send_mail = "<p>Na podany adres e-mail został wysłany link z resetowaniem hasła.</p>";
 
 			//Jezeli wcisnięto formularz
 
@@ -198,7 +190,7 @@ class UserManagement extends CI_Controller{
 					else
 					{
 						$errors++;
-						$arguments["reset_password_empty"] = $reset_password_empty;
+						$arguments["reset_password_empty"] = true;
 
 					}
 
@@ -224,7 +216,7 @@ class UserManagement extends CI_Controller{
 
 						//Wysylanie maila
 
-						$arguments['reset_password_send_mail'] = $reset_password_send_mail;
+						$arguments['reset_password_send_mail'] = true;
 						$this->load->view('forms_info', $arguments);
 
 
@@ -245,7 +237,7 @@ class UserManagement extends CI_Controller{
 						}
 						else
 						{
-							$arguments["reset_password_invalid_mail"] = $reset_password_invalid_mail;
+							$arguments["reset_password_invalid_mail"] = true;
 							$errors++;
 						}
 
@@ -272,24 +264,8 @@ class UserManagement extends CI_Controller{
 
 	private function register_attempt(){
 
-
-
-		$register_empty_username = "<p>Nazwa użytkownika nie może być pusta</p>";
-        $register_empty_password = "<p>Hasło nie może być puste</p>";
-        $register_different_password = "<p>Wpisane hasła różnią się od siebie</p>";
-        $register_password_short = "<p>Wpisane hasło nie spełnia wymagań (długość 8-32 znaków, co najmniej jedna duża litera, cyfra oraz znak specjalny)</p>";
-        $register_username_short = "<p>Wpisana nazwa użytkownika nie spełnia wymagań (długość 6-12 znaków, małe litery, brak polskich znaków)<p>";
         $register_succeess = "<p>Twoje konto zostało utworzone pomyślnie, na maila otrzymasz link z aktywacją konta</p>";
-        $register_mail_busy = "<p>Konto z tym adresem e-mail jest już zarejestrowane</p>";
-        $register_name_error = "<p>Pole imię nie spełnia wymagań (długość 1-12 znaków)</p>";
-        $register_surname_error = "<p>Pole nazwisko nie spełnia wymagań (długość 1-24 znaków)</p>";
-        $register_postalcode_error = "<p>Nieprawidłowy kod pocztowy</p>";
-        $register_city_error = "<p>Pole miasto nie spełnia wymagań (długość 2-30 znaków)</p>";
-        $register_rules_error = "<p>Musisz zaakceptować regulamin</p>";
-        $register_address_error = "<p>Pole adresu nie może być puste</p>";
-        $register_processing = "<p>Musisz wyrazić zgodę na przetwarzanie danych<p>";
-        $register_username_busy = "<p>Nazwa użytkownika jest już zajęta</p>";
-        $register_invalid_mail = "<p>Niepoprawny adres e-mail</p>";
+
         
         $register_name = "";
         $register_surname = "";
@@ -324,19 +300,19 @@ class UserManagement extends CI_Controller{
 				                $mysql_query = $this->db->query("SELECT * FROM `users` WHERE `LOGIN` = '".$this->username."'");
 				                if($mysql_query->num_rows()  > 0){
 
-				                    $arguments['username_busy'] = $register_username_busy;
+				                    $arguments['username_busy'] = true;
 				                    $errors++;
 				                }
 				            
 				            }
 				            else{
-				                $arguments['username_short'] = $register_username_short;
+				                $arguments['username_short'] = true;
 				                $errors++;
 				            }
 				        }
 				        else
 				        {
-				            $arguments['username_empty'] = $register_empty_username;
+				            $arguments['username_empty'] = true;
 				            $errors++;
 				        }
 				        
@@ -348,29 +324,29 @@ class UserManagement extends CI_Controller{
 				                    $this->password = md5(addslashes($_POST["password"]));
 				                else
 				                {
-				                    $arguments['password_short'] = $register_password_short;
+				                    $arguments['password_short'] = true;
 				                    $errors++;
 				                }
 				                
 				            }else
 				            {
-				                $arguments['password_differents'] = $register_different_password;
+				                $arguments['password_differents'] = true;
 				                $errors++;
 				            }
 				            
 				        }
 				        else{
-				            $arguments['password_empty'] = $register_empty_password;
+				            $arguments['password_empty'] = true;
 				            $errors++;
 				        }
 				          
 				        if(!isset($_POST["regulamin"]))
 				        {
-				            $arguments['rules_error'] = $register_rules_error;
+				            $arguments['rules_error'] = true;
 				            $errors++;
 				        }
 				        if(!isset($_POST["dane"])){
-				            $arguments['register_processing'] = $register_processing;
+				            $arguments['register_processing'] = true;
 				            $errors++; 
 				            
 				        }
@@ -384,14 +360,14 @@ class UserManagement extends CI_Controller{
 
 				        		if($query2->num_rows()  > 0){
 
-				                    $arguments['register_mail_busy'] = $register_mail_busy;
+				                    $arguments['register_mail_busy'] = true;
 				                    $errors++;
 				                }
 
 
 				        }else
 				        {
-				      		$arguments['register_invalid_mail'] = $register_invalid_mail;
+				      		$arguments['register_invalid_mail'] = true;
 				        	$errors++;
 				        }
 
@@ -400,7 +376,7 @@ class UserManagement extends CI_Controller{
 				            
 				        }else
 				        {
-				        	$arguments['register_name_error'] = $register_name_error;
+				        	$arguments['register_name_error'] = true;
 				            $errors++;
 				        }
 				            
@@ -409,7 +385,7 @@ class UserManagement extends CI_Controller{
 				            
 				        }else
 				        {
-				        	$arguments['register_surname_error'] = $register_surname_error;
+				        	$arguments['register_surname_error'] = true;
 				            $errors++;
 				        }
 				                
@@ -419,7 +395,7 @@ class UserManagement extends CI_Controller{
 				            
 				        }else
 				        {
-				        	$arguments['register_address_error'] = $register_address_error;
+				        	$arguments['register_address_error'] = true;
 				            $errors++;
 				        }
 				        
@@ -428,7 +404,7 @@ class UserManagement extends CI_Controller{
 				            
 				        }else
 				        {
-				            $arguments['register_postalcode_error'] = $register_postalcode_error;
+				            $arguments['register_postalcode_error'] = true;
 				            $errors++;
 				        }
 				                
@@ -436,7 +412,7 @@ class UserManagement extends CI_Controller{
 				            $register_city = addslashes($_POST["miasto"]);  
 				        }else
 				        {
-				            $arguments['register_city_error'] = $register_city_error;
+				            $arguments['register_city_error'] = true;
 				            $errors++;
 				        }
 				        if($errors > 0){
@@ -455,7 +431,7 @@ class UserManagement extends CI_Controller{
 				            VALUES (NULL, '".$this->username."', '".$this->password."', '".$register_name."', '".$register_surname."', NULL, '".$register_address."', '".$register_mail."', '".$register_postalcode."', '".$register_city."');");
 				            
 				            
-				            $arguments['account_created'] = $register_succeess;
+				            $arguments['account_created'] = true;
 
 				            $activation_code = $this->username.md5(rand()).rand(1,10000);
 
@@ -507,10 +483,7 @@ class UserManagement extends CI_Controller{
 
 		if(isset($_POST["submit_login"])){
 
-				$login_empty_username = "<p>Wprowadź swój login</p>";
-		        $login_empty_password = "<p>Wprowadź hasło</p>";
-		        $login_invalid_login_pass = "<p>Niepoprawny login/haslo bądź podany użytkownik nie istnieje</p>";
-		        $login_unactive = "<p>Musisz aktywować swoje konto, link z aktywacją konta został wysłany na twoją skrzynkę pocztową</p>";
+
 		        
 		        $errors = 0;
 
@@ -520,7 +493,7 @@ class UserManagement extends CI_Controller{
 		        }
 		        else
 		        {
-		            $arguments['login_empty_username'] = $login_empty_username;
+		            $arguments['login_empty_username'] = true;
 		            $errors++;
 		        }
 		        
@@ -529,7 +502,7 @@ class UserManagement extends CI_Controller{
 		            
 		        }else
 		        {
-		            $arguments['login_empty_password'] =$login_empty_password;
+		            $arguments['login_empty_password'] = true;
 		            $errors++;
 		        }
 		        
@@ -556,7 +529,7 @@ class UserManagement extends CI_Controller{
 			            else
 			            	//Konto nie jest aktywne
 			            {
-			            	$arguments['login_unactive'] = $login_unactive;
+			            	$arguments['login_unactive'] = true;
 			            	$this->load->view('forms_error', $arguments);
 
 			            }
@@ -564,7 +537,7 @@ class UserManagement extends CI_Controller{
 		            }
 		            else
 		            {
-		         		$arguments['login_invalid_login_pass'] = $login_invalid_login_pass;
+		         		$arguments['login_invalid_login_pass'] = true;
 		         		$this->load->view('forms_error', $arguments);
 		            }
 
@@ -591,8 +564,6 @@ class UserManagement extends CI_Controller{
 		$token = addslashes($_GET["activation"]);
 
 		$query = $this->db->query("SELECT * FROM `activation` WHERE `code` = '".$token."'");
-		$activation_invalid_token = "<p>Nieprawidłowy klucz aktywacji albo link już wygasł</p>"; 
-		$activation_success = "<p>Aktywacja przebiegła pomyślnie, możesz teraz się zalogować</p>";
 
 		if($query->num_rows() > 0){ 
 
@@ -613,7 +584,7 @@ class UserManagement extends CI_Controller{
 
 
 
-			$arguments['activation_invalid_token'] = $activation_invalid_token;
+			$arguments['activation_invalid_token'] = true;
 			$this->load->view('forms_error', $arguments);
 
 
@@ -625,7 +596,7 @@ class UserManagement extends CI_Controller{
 			$this->db->query("UPDATE  `users` SET  `registered` =  '1' WHERE  `ID` = ".$user_id.";");
 
 
-			$arguments['activation_success'] = $activation_success;
+			$arguments['activation_success'] = true;
 			$this->load->view('forms_info',$arguments);
 
 			$this->load->view("forms/login_form.php");
@@ -635,7 +606,7 @@ class UserManagement extends CI_Controller{
 		//Jezeli nieprawidlowy token
 		else
 		{
-			$arguments['activation_invalid_token'] = $activation_invalid_token;
+			$arguments['activation_invalid_token'] = true;
 			$this->load->view('forms_error', $arguments);
 
 
