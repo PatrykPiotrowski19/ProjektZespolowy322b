@@ -4,7 +4,7 @@ class UserManagement extends CI_Controller{
 
 
      
-     private $username = null;
+     public $username = null;
      private $password = null;
      
 
@@ -12,6 +12,7 @@ class UserManagement extends CI_Controller{
 		$this->load->database();
 		$this->load->view("header.php");
 		$this->load->library('session');
+		$this->load->model("UserManagement_Model");
 
 		
 		if(isset($_GET["logout_success"])){
@@ -74,15 +75,18 @@ class UserManagement extends CI_Controller{
 	}
 
 
-	private function profile_management(){
+	private function profile_management()
+	{
 
 		echo "Witaj ".$_SESSION["username"];
 		echo "<p><a href=/index.php/UserManagement?Logout>Wyloguj się</a></p>";
 
+
 	}
 
 
-	private function reset_password2(){
+	private function reset_password2()
+	{
 
 
 		if(isset($_POST["submit_reset_password"])){
@@ -91,7 +95,7 @@ class UserManagement extends CI_Controller{
 
 				$_GET["reset"] = $_POST["token_pass"];
 
-			if(!empty($_POST["password"]) && !empty($_POST["password"])){
+			if(!empty($_POST["password"]) && !empty($_POST["password2"])){
 
 				//etap walidacji
 				if($_POST["password"] == $_POST["password2"]){
@@ -126,22 +130,19 @@ class UserManagement extends CI_Controller{
 
 			if($errors == 0){	
 
-				$query = $this->db->query("SELECT * FROM `password_reset` WHERE `code` = '".addslashes($_POST["token_pass"])."'");
+				$row = $this->UserManagement_Model->GetPasswordResetInfo($_POST["token_pass"]);
 
-				if($query->num_rows() == 0){
+				if(!isset($row->ID)){
 
                   $arguments['reset_invalid_token'] = true;
 				  $errors++;
-
-
               	}
               	else
               	{
-					foreach ($query->result() as $row);
 					$date = new DateTime();
-					$expiration_time = $date->getTimestamp();
+					$expration_time = $date->getTimestamp();
 
-					if($row->EXPIRATION_TIME < $expiration_time){
+					if($row->expiration_time < $expration_time){
                   		$arguments['reset_invalid_token'] = true;
 						$this->load->view("forms_error.php",$arguments);
 						$query3 = $this->db->query("DELETE FROM `password_reset` WHERE `code` = '".addslashes($_POST["token_pass"])."';");
@@ -174,7 +175,8 @@ class UserManagement extends CI_Controller{
 	}
 
 
-	private function reset_password(){
+	private function reset_password()
+	{
 
 			$errors = 0;
 			$reset_password_invalid_mail = "<p>Niepoprawny mail</p>";
@@ -197,17 +199,14 @@ class UserManagement extends CI_Controller{
 
 					if($errors == 0){
 
-						$mail_address = addslashes($_POST["email"]);
+						$mail_address = $_POST["email"];
 
-						$query = $this->db->query("SELECT * FROM `users` WHERE `ADDRESS_TAB2` = '".$mail_address."'");
+						$row = $this->UserManagement_Model->GetUserInfoFromMail($mail_address);
 
-						if($query->num_rows()  > 0){
-
-
-						foreach ($query->result() as $row);
-
+						if(isset($row->ID)){
 
 						$date = new DateTime();
+
 
 						//12 godzin - link aktywny
 						$activate_time_in_hours = 12;
@@ -220,19 +219,8 @@ class UserManagement extends CI_Controller{
 						$this->load->view('forms_info', $arguments);
 
 
-							$query2 = $this->db->query("INSERT INTO `password_reset` (`ID`, `USER_ID`, `CODE`, `EXPIRATION_TIME`) VALUES (NULL, '".$row->ID."', '".$token."', '".$expiration_time."');");
-
-							$this->load->library('email');
-							$this->email->set_mailtype("html");
-
-							$this->email->from('noreply@sklepinternetowy.pl', 'Sklep internetowy');
-							$this->email->to($row->ADDRESS_TAB2);
-
-							$this->email->subject('Reset hasła.');
-							$this->email->message('Witaj <b>'.$row->LOGIN.'</b>.<br>Do resetowania hasła: <i>http://322b.esy.es/index.php/UserManagement?reset='.$token.'</i><br>Link wygasa po upływie '.$activate_time_in_hours.' godzin.<br>');
-
-							$this->email->send();
-
+						$this->UserManagement_Model->ResetPasswordGenerateLink($row->ID, $token, $expiration_time);
+						$this->UserManagement_Model->ResetPasswordSendMail($row->ADDRESS_TAB2, $token, $expiration_time);
 
 						}
 						else
@@ -240,11 +228,7 @@ class UserManagement extends CI_Controller{
 							$arguments["reset_password_invalid_mail"] = true;
 							$errors++;
 						}
-
-
 					}
-
-
 			}
 
 
@@ -255,14 +239,15 @@ class UserManagement extends CI_Controller{
 
 			}
 
-
-
-        		$this->load->view("forms/reset_password.php");
+        	$this->load->view("forms/reset_password.php");
 
 	}
 
 
-	private function register_attempt(){
+	private function register_attempt()
+	{
+
+		$row=Array();
 
         $register_succeess = "<p>Twoje konto zostało utworzone pomyślnie, na maila otrzymasz link z aktywacją konta</p>";
 
@@ -292,19 +277,18 @@ class UserManagement extends CI_Controller{
 				            
 				            
 				            if($validate_class->ValidateLogin($_POST["login"])){
+
+							$this->username = $_POST["login"];	                
 				                
-				                
-				                $this->username = addslashes($_POST["login"]);
-				                
-				                
-				                $mysql_query = $this->db->query("SELECT * FROM `users` WHERE `LOGIN` = '".$this->username."'");
-				                if($mysql_query->num_rows()  > 0){
+				                //Sprawdza czy uzytkownik istnieje
+          
+				            if($this->UserManagement_Model->CheckUsername($this->username)){
 
 				                    $arguments['username_busy'] = true;
 				                    $errors++;
-				                }
-				            
+				                }				          
 				            }
+
 				            else{
 				                $arguments['username_short'] = true;
 				                $errors++;
@@ -353,12 +337,9 @@ class UserManagement extends CI_Controller{
 
 				        if($validate_class->ValidateMail($_POST["mail"])){
 
-				        	$register_mail = addslashes($_POST["mail"]);
+				        	$register_mail = $_POST["mail"];
 
-
-				        	$query2 = $this->db->query("SELECT * FROM `users` WHERE `ADDRESS_TAB2` = '".$register_mail."'");
-
-				        		if($query2->num_rows()  > 0){
+				        		if($this->UserManagement_Model->CheckMail($register_mail)){
 
 				                    $arguments['register_mail_busy'] = true;
 				                    $errors++;
@@ -423,42 +404,27 @@ class UserManagement extends CI_Controller{
 				        //Jezeli nie ma błędów
 				        if($errors == 0){
 				            
-				               
+				            	            
 				            
-				            
-				            $this->db->query("INSERT INTO `users` 
-				            (`ID`, `LOGIN`, `PASSWORD`, `NAME`, `SURNAME`, `DATE_OF_BIRTH`, `ADDRESS_TAB`, `ADDRESS_TAB2`, `POSTAL_CODE`, `CITY`) 
-				            VALUES (NULL, '".$this->username."', '".$this->password."', '".$register_name."', '".$register_surname."', NULL, '".$register_address."', '".$register_mail."', '".$register_postalcode."', '".$register_city."');");
-				            
-				            
-				            $arguments['account_created'] = true;
+				           if($this->UserManagement_Model->InsertUserToDatabase(
+				            	$this->username,
+				            	$this->password,
+				            	$register_name,
+				            	$register_surname,
+				            	$register_address,
+				            	$register_mail,
+				            	$register_postalcode,
+				            	$register_city
+				            	))				          
+				            			$arguments['account_created'] = true;
+				        else{
 
-				            $activation_code = $this->username.md5(rand()).rand(1,10000);
+				        		return;
+				        }
 
-				            $date = new DateTime();
-				            $expration_time = $date->getTimestamp() + 24*3600*7; 
+				        $user_id = $this->UserManagement_Model->GetUserId($this->username);
 
-
-				            $query = $this->db->query("SELECT * from `users` WHERE `LOGIN` = '".$this->username."';");
-
-				            foreach ($query->result() as $row)
-				            	$user_id = $row->ID;
-
-
-				            $this->db->query("INSERT INTO `activation` (`ID`, `user_id`, `code`, `expiration_time`) VALUES (NULL, '".$user_id."', 
-				            	'".$activation_code."', '".$expration_time."');");
-
-
-				            $this->load->library('email');
-							$this->email->set_mailtype("html");
-
-							$this->email->from('noreply@sklepinternetowy.pl', 'Sklep internetowy');
-							$this->email->to($row->ADDRESS_TAB2);
-
-							$this->email->subject('Aktywacja konta');
-							$this->email->message('Witaj <b>'.$row->LOGIN.'</b>.<br>Zakończenie procesu rejestracji: <i>http://322b.esy.es/index.php/UserManagement?activation='.$activation_code.'</i><br>Po 7 dniach link wygasa a konto zostaje usunięte.<br>');
-
-							$this->email->send();
+				            $this->UserManagement_Model->SetActivationCode($user_id,$register_mail);
 
 
 				          	$this->load->view('forms_info', $arguments);
@@ -469,7 +435,6 @@ class UserManagement extends CI_Controller{
 				        	$this->load->view('forms_error', $arguments);
 				        }   
 
-
         }  
 
         		$this->load->view("forms/register_form.php");
@@ -477,8 +442,8 @@ class UserManagement extends CI_Controller{
 	}
 
 
-	private function login_attempt(){
-
+	private function login_attempt()
+	{
 
 
 		if(isset($_POST["submit_login"])){
@@ -509,20 +474,15 @@ class UserManagement extends CI_Controller{
 		        
 		        if($errors == 0){
 		            
-		            $this->username = addslashes($_POST["login"]);
-		            $this->password = md5(addslashes($_POST["password"]));
+		            $this->username = $_POST["login"];
+		            $this->password = $_POST["password"];
 		            
-		            
-		            $query = $this->db->query("SELECT * FROM `users` WHERE `LOGIN` = '".$this->username."' AND `PASSWORD` = '".$this->password."'");
+		            $result = $this->UserManagement_Model->CheckLoginAndPassword($this->username, $this->password);
 
 		            //Jezeli warunki zostały spełnione
-		            if($query->num_rows() > 0){
+		            if($result >= 0){
 		                
-
-						foreach ($query->result() as $row)
-							$status = $row->registered;
-
-						if($status){
+						if($result == 1){
 		               			$_SESSION["username"] = $this->username;
 		               			header('Location: /index.php/UserManagement?Profile&LoginSuccess');
 			            }
@@ -540,67 +500,55 @@ class UserManagement extends CI_Controller{
 		         		$arguments['login_invalid_login_pass'] = true;
 		         		$this->load->view('forms_error', $arguments);
 		            }
-
-		            
 		        }
 		        else
 		            {
-
 		            	$this->load->view('forms_error', $arguments);
-		            }
-		        
-
-
+		            }		        
 			}
 
-
 			$this->load->view("forms/login_form.php");
-
 		}
 
 
-	private function activate_user(){
+	private function activate_user()
+	{
 
-		$token = addslashes($_GET["activation"]);
+		$token = $_GET["activation"];
 
-		$query = $this->db->query("SELECT * FROM `activation` WHERE `code` = '".$token."'");
+		$row = $this->UserManagement_Model->GetActivationInfoFromToken($token);
+		if(isset($row->expiration_time))
+		{
 
-		if($query->num_rows() > 0){ 
+			$exp_time = $row->expiration_time;
+			$user_id = $row->user_id;
 
-			foreach ($query->result() as $row) 
-			{
-				$user_id = $row->user_id;
-				$exp_time = $row->expiration_time;
-			}
+			echo "ID uzytkownika: ".$user_id;
 
-		$date = new DateTime();
+			$date = new DateTime();
 
-		if($date->getTimestamp() > $exp_time){
-
-
-			//usuwa rekord + uzytkownika - link wygasł
-			$this->db->query("DELETE FROM `activation` WHERE `code` = '".$token."';");
-			$this->db->query("DELETE FROM `users` WHERE `ID` = ".$user_id."");
+			if($date->getTimestamp() > $exp_time){
 
 
+				//usuwa rekord + uzytkownika - link wygasł
+				$this->UserManagement_Model->RemoveActivationLinkFromToken($token);
+				$this->UserManagement_Model->RemoveUsernameFromID($user_id);
 
-			$arguments['activation_invalid_token'] = true;
-			$this->load->view('forms_error', $arguments);
+				$arguments['activation_invalid_token'] = true;
+				$this->load->view('forms_error', $arguments);
+				}
+				else
+				//aktywacja konta	
+				{
+				$this->UserManagement_Model->RemoveActivationLinkFromToken($token);
+				$this->UserManagement_Model->ActivateUserFromID($user_id);
 
+				$arguments['activation_success'] = true;
 
-			}
-			else
-			//aktywacja konta	
-			{
-			$this->db->query("DELETE FROM `activation` WHERE `code` = '".$token."';");
-			$this->db->query("UPDATE  `users` SET  `registered` =  '1' WHERE  `ID` = ".$user_id.";");
+				$this->load->view('forms_info',$arguments);
 
-
-			$arguments['activation_success'] = true;
-			$this->load->view('forms_info',$arguments);
-
-			$this->load->view("forms/login_form.php");
-			}
+				$this->load->view("forms/login_form.php");
+				}
 
 		}
 		//Jezeli nieprawidlowy token
@@ -608,8 +556,6 @@ class UserManagement extends CI_Controller{
 		{
 			$arguments['activation_invalid_token'] = true;
 			$this->load->view('forms_error', $arguments);
-
-
 		}
 
 	}

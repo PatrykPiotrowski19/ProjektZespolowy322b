@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(E_ALL ^ E_NOTICE);
 $this->load->library('session');
 $this->load->database();
 
