@@ -1,11 +1,10 @@
 <?php
-//error_reporting(E_ALL ^ E_NOTICE);
+error_reporting(E_ALL ^ E_NOTICE);
 $this->load->library('session');
 $this->load->database();
 
 
 ?>
-
 <!DOCTYPE HTML>
 <head>
 	<meta http-equiv="content-type" content="text/html" />
