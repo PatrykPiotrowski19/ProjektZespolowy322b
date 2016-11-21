@@ -8,14 +8,16 @@ class UserManagement extends CI_Controller{
      private $password = null;
      
 
-	public function index(){
+	public function index()
+	{
 		$this->load->database();
 		$this->load->view("header.php");
 		$this->load->library('session');
 		$this->load->model("UserManagement_Model");
 
 		
-		if(isset($_GET["logout_success"])){
+		if(isset($_GET["logout_success"]))
+		{
 			
 			echo "<p>Wylogowano się pomyślnie</p>";
 			
@@ -105,7 +107,7 @@ class UserManagement extends CI_Controller{
 
 	 			if($validate_class->ValidatePassword(addslashes($_POST["password"]))){
 						
-						$this->password = md5(addslashes($_POST["password"]));
+						$this->password = ($_POST["password"]);
 					
 					}
 					else
@@ -145,19 +147,15 @@ class UserManagement extends CI_Controller{
 					if($row->expiration_time < $expration_time){
                   		$arguments['reset_invalid_token'] = true;
 						$this->load->view("forms_error.php",$arguments);
-						$query3 = $this->db->query("DELETE FROM `password_reset` WHERE `code` = '".addslashes($_POST["token_pass"])."';");
+						$this->UserManagement_Model->DeletePasswordResetRecord($_POST["token_pass"]);
 					}
 					else
 					{
-						$password = md5(addslashes($_POST["password"]));
-						$query2 = $this->db->query("UPDATE `users` SET `PASSWORD` = '".$password."' WHERE `users`.`ID` = ".$row->USER_ID.";");
+						$this->UserManagement_Model->SetNewPassword($row->USER_ID,$this->password);
 						$arguments["reset_complete"] = true;
 						$this->load->view("forms_info.php",$arguments);
-						$query3 = $this->db->query("DELETE FROM `password_reset` WHERE `password_reset`.`USER_ID` = ".$row->USER_ID.";");
+						$this->UserManagement_Model->DeletePasswordResetRecordsByUserID($row->USER_ID);
 					}
-
-
-
 
               	}	
 

@@ -279,6 +279,31 @@ class UserManagement_Model extends CI_Model
 
 	}
 
+	public function DeletePasswordResetRecord($token_pass)
+	{
+
+		$token_pass = addslashes($token_pass);
+		$query = $this->db->query("DELETE FROM `password_reset` WHERE `code` = '".$token_pass."';");
+		
+	}
+
+	public function SetNewPassword($ID,$password)
+	{
+		$ID = addslashes($ID);
+		$password = md5(addslashes($password));
+
+		$query = $this->db->query("UPDATE `users` SET `PASSWORD` = '".$password."' WHERE `users`.`ID` = ".$ID.";");
+
+	}
+
+	public function DeletePasswordResetRecordsByUserID($ID)
+	{
+
+		$ID = addslashes($ID);
+		$query = $this->db->query("DELETE FROM `password_reset` WHERE `password_reset`.`USER_ID` = ".$ID.";");
+
+	}
+
 }
 
 ?>
