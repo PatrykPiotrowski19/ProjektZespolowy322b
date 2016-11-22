@@ -80,7 +80,6 @@ class UserManagement extends CI_Controller{
 	private function profile_management()
 	{
 
-		echo "Witaj ".$_SESSION["username"];
 		echo "<p><a href=/index.php/UserManagement?Logout>Wyloguj się</a></p>";
 
 

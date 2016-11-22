@@ -12,8 +12,7 @@ class Products extends CI_Controller{
 
 		if(isset($_GET["id"]) && is_numeric($_GET["id"])){
 
-
-
+			$this->show_item($_GET["id"]);
 
 		}
 		else
