@@ -1,6 +1,18 @@
-<br><br><br><div id="notify_small2_red">
+<?php
 
-<?php 
+if(isset($custom_tag))
+	echo $custom_tag;
+
+
+?>
+
+
+
+
+
+
+<!--
+
         $register_mail_busy2 = "<p>Konto z tym adresem e-mail jest już zarejestrowane</p>";
         $register_name_error2 = "<p>Pole imię nie spełnia wymagań (długość 1-12 znaków)</p>";
         $register_surname_error2 = "<p>Pole nazwisko nie spełnia wymagań (długość 1-24 znaków)</p>";
@@ -44,8 +56,6 @@ if(isset($username_short))
 if(isset($username_empty))
 	echo $empty_username2;
 
-if(isset($username_busy))
-	echo $username_busy2;
 
 if(isset($password_short))
 	echo $password_short2;
@@ -107,7 +117,6 @@ if(isset($reset_invalid_token))
 
 if(isset($all))
 	echo $all;
-
- ?>
-
- </div>
+*/
+ 
+ -->

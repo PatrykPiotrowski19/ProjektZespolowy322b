@@ -2,7 +2,8 @@
 error_reporting(E_ALL ^ E_NOTICE);
 $this->load->library('session');
 $this->load->database();
-
+$ci =&get_instance();
+$ci->load->model("MainPage_Model");
 
 ?>
 <!DOCTYPE HTML>
@@ -22,56 +23,11 @@ $this->load->database();
  <ol>
 
  <?php
-            $query = $this->db->query("SELECT * FROM `category`");
 
-
-
-            foreach ($query->result() as $row){
-
-
-         
-echo '<li><a href="#">'.$row->name.'</a>';
-
- ?>
-   
-      <ul>
-<?php
-          $query2 = $this->db->query("SELECT * from `subcategory` WHERE `category_id` = ".$row->ID." order by `ID`");
-
-          foreach($query2->result() as $row2){
-
-            echo '<li><a href="#">'.$row2->name.'</a></li>';
-          }
-
-  ?>
-      </ul>
-    </li>
-
-<?php
-   }
-    
-?>
-<ol id="account">
-<li><a href="#"><?php
-if(isset($_SESSION["username"]) && !empty($_SESSION["username"])){
-	echo "Witaj ".$_SESSION["username"];
-}
-else
-	echo "Konto";
-?>
+  $ci->MainPage_Model->ShowProductList();
+  $ci->MainPage_Model->ShowUserBar();
   
-</a>
-      <ul>
-	  <?php
-	  if(isset($_SESSION["username"]) && !empty($_SESSION["username"])){
-		  echo '<li><a href="/index.php/UserManagement?Logout">Wyloguj się</a></li>';
-	  }
-	  else
-	  	  echo '	  
-        <li><a href="/index.php/UserManagement?Login">Logowanie</a></li>
-        <li><a id="button" href="/index.php/UserManagement?Register">Rejestracja</a></li>';
-	  
-	  ?>
+?>
       </ul>
     </li>
 </ol>
