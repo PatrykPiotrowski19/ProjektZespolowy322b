@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Czas generowania: 28 Lis 2016, 14:51
+-- Czas generowania: 28 Lis 2016, 18:57
 -- Wersja serwera: 5.7.9
 -- Wersja PHP: 5.6.16
 
@@ -30,7 +30,7 @@ DROP TABLE IF EXISTS `activation`;
 CREATE TABLE IF NOT EXISTS `activation` (
   `ID` int(10) NOT NULL AUTO_INCREMENT,
   `user_id` int(10) NOT NULL,
-  `code` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `code` varchar(70) COLLATE utf8_unicode_ci NOT NULL,
   `expiration_time` int(20) NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `category` (
   `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `description` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `category`
@@ -72,7 +72,8 @@ CREATE TABLE IF NOT EXISTS `category` (
 
 INSERT INTO `category` (`ID`, `name`, `description`) VALUES
 (1, 'Urządzenia mobilne', 'Urządzenia mobilne'),
-(2, 'Komputery', 'Komputery');
+(2, 'Komputery', 'Komputery'),
+(7, 'Nowa', 'Nowa');
 
 -- --------------------------------------------------------
 
@@ -126,7 +127,7 @@ CREATE TABLE IF NOT EXISTS `product` (
   `ilosc` int(20) NOT NULL,
   `opis` varchar(4096) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `product`
@@ -136,7 +137,10 @@ INSERT INTO `product` (`ID`, `podkategoria_id`, `nazwa_produktu`, `cena_produktu
 (1, 1, 'Sony Xperia M', 529.22, 10, 'Sony Xperia M to smartfon ze średniej półki z 4-calowym ekranem o rozdzielczości 854x480 pikseli. Dostępny jest w dwóch wariantach - z obsługą jednej lub dwóch kart SIM. Telefon działa w oparciu o Android 4.1 Jelly Bean. Posiada 4 GB wbudowanej pamięci flash, którą można rozszerzyć za pomocą kart microSD o dodatkowe 32 GB. Aparat ma rozdzielczość 5 Mpx i umożliwia kręcenie filmów HD. Jest też przednia kamera. Telefon dostępny będzie w czterech kolorach: czarnym, białym, purpurowym oraz limonowym.'),
 (2, 1, 'Microsoft Lumia 950', 1289, 30, 'Zaawansowane funkcje, stylowy wygląd i najlepsze zalety systemu Windows 10 – kup telefon, który działa jak komputer i przemień zwykłą chwilę w swoje najważniejsze osiągnięcie.'),
 (3, 1, 'Samsung Galaxy S5', 1900, 10, 'Tak'),
-(4, 1, 'Test3', 12.99, 15, 'Test3');
+(4, 1, 'Test3', 12.99, 15, 'Test3'),
+(6, 21, 'przedmiocik', 10, 10, 'Opis przedmiotu'),
+(7, 21, 'przedmiocik', 10, 10, 'Opis przedmiotu'),
+(8, 21, 'Przedmiot2', 10, 10, 'das5asvas5a');
 
 -- --------------------------------------------------------
 
@@ -151,7 +155,7 @@ CREATE TABLE IF NOT EXISTS `product_image` (
   `image_id` int(3) NOT NULL,
   `imagename` varchar(70) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `product_image`
@@ -164,7 +168,10 @@ INSERT INTO `product_image` (`ID`, `product_id`, `image_id`, `imagename`) VALUES
 (4, 1, 4, '1_04.png'),
 (5, 2, 1, '2_01.png'),
 (6, 3, 1, '3_01.png'),
-(7, 4, 1, '1_01.png');
+(7, 4, 1, '1_01.png'),
+(8, 12, 1, 'img.png\r\n'),
+(9, 6, 1, '1_01.png'),
+(10, 8, 1, '1_01.png');
 
 -- --------------------------------------------------------
 
@@ -178,7 +185,7 @@ CREATE TABLE IF NOT EXISTS `subcategory` (
   `category_id` int(20) NOT NULL,
   `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `subcategory`
@@ -188,6 +195,7 @@ INSERT INTO `subcategory` (`ID`, `category_id`, `name`) VALUES
 (1, 1, 'Telefony komórkowe'),
 (2, 1, 'Tablety'),
 (7, 2, 'Komputery stacjonarne'),
+(21, 7, 'Nowapodkategoria'),
 (8, 2, 'Laptopy');
 
 -- --------------------------------------------------------

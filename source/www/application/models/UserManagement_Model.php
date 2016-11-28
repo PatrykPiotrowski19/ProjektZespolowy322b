@@ -230,6 +230,7 @@ class UserManagement_Model extends CI_Model
 
 	public function ResetPasswordGenerateLink($ID, $token, $expiration_time)
 	{
+		
 		$ID = addslashes($ID);
 		$token = addslashes($token);
 		$expiration_time = addslashes($expiration_time);
@@ -251,7 +252,7 @@ class UserManagement_Model extends CI_Model
 
 	public function ResetPasswordSendMail($mail, $token, $activate_time_in_hours)
 	{
-		$this->load->library('mail');
+		$this->load->library('email');
 		$this->email->set_mailtype("html");
 
 		$this->email->from('noreply@sklepinternetowy.pl', 'Sklep internetowy');

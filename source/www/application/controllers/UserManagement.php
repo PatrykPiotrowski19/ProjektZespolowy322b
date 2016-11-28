@@ -13,6 +13,7 @@ class UserManagement extends CI_Controller
 	{
 		$this->load->database();
 		$this->load->view('header');
+		$this->load->library('email');
 
 		$this->load->model("SessionManager_Model");
 		$this->load->model("UserManagement_Model");
@@ -210,7 +211,7 @@ class UserManagement extends CI_Controller
 
 						//Wysylanie maila
 
-				  		$arg['info'] = 'Rejestracja została zakończona pomyślnie, link z aktywacją konta został wysłany na adres e-mail';
+				  		$arg['info'] = 'Link z resetowaniem hasła został wysłany na podany wyżej adres e-mail';
 				  		$this->load->view('forms_info',$arg); 						
 
 

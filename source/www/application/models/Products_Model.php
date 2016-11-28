@@ -46,6 +46,20 @@ class Products_Model extends CI_Model
 
 	}
 
+	public function CategoryIsNotEmpty($ID)
+	{
+		if(is_numeric($ID))
+		{
+			$query = $this->db->query("SELECT * from `subcategory` WHERE `category_id` = ".$ID."");
+
+			if($query->num_rows() > 0)
+				return 1;
+
+			return 0;
+		}
+
+	}
+
 
 	public function SubcategoryExist($ID)
 	{
@@ -109,6 +123,54 @@ class Products_Model extends CI_Model
 	}
 
 
+	public function GetSubcategoryIDByName($Name)
+	{
+
+		$Name = addslashes($Name);
+
+		$query = $this->db->query("SELECT * from `subcategory` WHERE `name` = '".$Name."';");
+		
+		if($query->num_rows() > 0)
+		{
+
+			foreach($query->result() as $row){
+
+				return $row->ID;
+
+		}
+			return 0;
+		}
+		return 0;
+
+
+
+	}
+
+
+	public function GetCategoryIDByName($Name)
+	{
+
+		$Name = addslashes($Name);
+
+		$query = $this->db->query("SELECT * from `category` WHERE `name` = '".$Name."';");
+		
+		if($query->num_rows() > 0)
+		{
+
+			foreach($query->result() as $row){
+
+				return $row->ID;
+
+		}
+			return 0;
+		}
+		return 0;
+
+
+	}
+
+
+
 	public function ShowProductList($ID, $Maximum)
 	{
 		if(is_numeric($ID) && is_numeric($Maximum))
@@ -137,8 +199,158 @@ class Products_Model extends CI_Model
 		}
 
 		return 0;
+
 	}
 
+
+
+	public function IsCategoryExist($Category_Name)
+	{
+		$Category_Name = addslashes($Category_Name);
+
+		$query = $this->db->query("SELECT * from `category` WHERE `name` = '".$Category_Name."';");
+
+		if($query->num_rows() > 0)
+			return 1;
+
+		return 0;
+
+	}
+
+
+	public function IsSubCategoryExist($Subcategory_Name)
+	{
+		$Subcategory_Name = addslashes($Subcategory_Name);
+
+		$query = $this->db->query("SELECT * from `subcategory` WHERE `name` = '".$Subcategory_Name."';");
+
+		if($query->num_rows() > 0)
+			return 1;
+
+		return 0;
+
+	}
+
+	public function AddNewCategory($Category_Name)
+	{
+		$Category_Name = addslashes($Category_Name);
+
+		$query = $this->db->query("SELECT * from `category` WHERE name = '".$Category_Name."';");
+
+		if($query->num_rows() == 0)
+		{
+
+			$query2 = $this->db->query("INSERT INTO 
+				`category` (
+				`ID`, 
+				`name`, 
+				`description`) VALUES (
+				NULL, 
+				'".$Category_Name."', 
+				'".$Category_Name."');");
+
+		}
+
+	}
+
+	public function AddNewSubcategory($Subcategory_Name, $Category_Name)
+	{
+
+		$Subcategory_Name = addslashes($Subcategory_Name);
+
+		$query = $this->db->query("SELECT * from `subcategory` WHERE name = '".$Subcategory_Name."';");
+
+		if($query->num_rows() == 0)
+		{
+			$Subcategory_Name = addslashes($Subcategory_Name);
+
+
+			//Zdobadz ID kategorii nadrzednej
+			$Parent_ID = $this->GetCategoryIDByName($Category_Name);
+			echo "PARENT ID = ".$Parent_ID;
+			if($Parent_ID > 0)
+			{
+
+				$query = $this->db->query("INSERT INTO `subcategory` (
+					`ID`, 
+					`category_id`, 
+					`name`) VALUES (
+					NULL, 
+					'".$Parent_ID."', 
+					'".$Subcategory_Name."');");
+
+			}
+
+		}
+
+	}
+
+
+	public function GetProductIDByName($Name)
+	{
+		$Name = addslashes($Name);
+
+		$query = $this->db->query("SELECT * from `product` WHERE `nazwa_produktu` = '".$Name."';");
+
+		if($query->num_rows() > 0)
+		{
+
+			foreach($query->result() as $row){
+
+				return $row->ID;
+
+		}
+			return 0;
+		}
+		return 0;
+
+
+	}
+
+	public function InsertProductToDatabase(
+		$Subcategory_Name,
+		$Product_Name,
+		$Product_Price,
+		$Product_Count,
+		$Product_Description
+		)
+	{
+
+		$Subcategory_ID = $this->GetSubcategoryIDByName($Subcategory_Name);
+		$Products_Name = addslashes($Product_Name);
+		$Product_Price = round($Product_Price,2);
+
+		$query = $this->db->query("INSERT INTO `product` (
+			`ID`, 
+			`podkategoria_id`, 
+			`nazwa_produktu`, 
+			`cena_produktu`, 
+			`ilosc`, 
+			`opis`) VALUES (
+			NULL, 
+			'".$Subcategory_ID."', 
+			'".$Product_Name."', 
+			'".$Product_Price."', 
+			'".$Product_Count."', 
+			'".$Product_Description."'
+			);");
+
+		//Tymczasowa opcja dodawania zdjec
+
+		$Product_ID = $this->GetProductIDByName($Product_Name);
+
+		$query = $this->db->query("INSERT INTO `product_image` (
+			`ID`, 
+			`product_id`, 
+			`image_id`, 
+			`imagename`) VALUES (
+			NULL, 
+			'".$Product_ID."', 
+			'1', 
+			'1_01.png');");
+
+
+	}
 
 
 }
