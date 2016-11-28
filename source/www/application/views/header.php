@@ -1,7 +1,5 @@
 <?php
 error_reporting(E_ALL ^ E_NOTICE);
-$this->load->library('session');
-$this->load->database();
 $ci =&get_instance();
 $ci->load->model("MainPage_Model");
 
@@ -26,9 +24,10 @@ $ci->load->model("MainPage_Model");
 
   $ci->MainPage_Model->ShowProductList();
   $ci->MainPage_Model->ShowUserBar();
-  
+
 ?>
       </ul>
     </li>
 </ol>
 </div>
+<br><br><br>

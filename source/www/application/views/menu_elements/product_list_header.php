@@ -4,7 +4,7 @@ if(isset($product_name))
 {
 ?>
 
-<li><a href="#"><?php echo $product_name ?></a>
+<li><a href="/index.php/Products?ShowCategory=<?php echo $ID  ?>"><?php echo $product_name ?></a>
 
 
 <?php

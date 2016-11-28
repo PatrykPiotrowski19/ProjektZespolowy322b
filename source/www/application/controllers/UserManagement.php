@@ -1,18 +1,20 @@
 <?php
 
-class UserManagement extends CI_Controller{
+class UserManagement extends CI_Controller
+{
 
 
      
-     public $username = null;
-     private $password = null;
+    public $username = null;
+    private $password = null;
      
 
 	public function index()
 	{
 		$this->load->database();
 		$this->load->view('header');
-		$this->load->library('session');
+
+		$this->load->model("SessionManager_Model");
 		$this->load->model("UserManagement_Model");
 		
 				$tag['custom_tag'] = "<br><br><br>";
@@ -26,7 +28,7 @@ class UserManagement extends CI_Controller{
 		}
 	
 		
-		if(isset($_SESSION["username"]))
+		if($this->SessionManager_Model->IsLogged())
 		{
 
 			$this->profile_management();
@@ -35,7 +37,7 @@ class UserManagement extends CI_Controller{
 		if(isset($_GET["Logout"]))
 		{
 
-			unset($_SESSION["username"]);
+			$this->SessionManager_Model->Logout();
 			header('Location: /index.php/UserManagement?logout_success');
 		}
 
@@ -72,16 +74,13 @@ class UserManagement extends CI_Controller{
 
 				$this->activate_user();
 			}
-	}
+		}
 
 	}
 
 
 	private function profile_management()
 	{
-
-		$tag['custom_tag'] = "<p><a href=/index.php/UserManagement?Logout>Wyloguj się</a></p>";
-		$this->load->view("custom_tag",$tag);
 
 	}
 
@@ -496,8 +495,10 @@ class UserManagement extends CI_Controller{
 		            if($result >= 0){
 		                
 						if($result == 1){
-		               			$_SESSION["username"] = $this->username;
+
+								$this->SessionManager_Model->SetUserSession($this->username);
 		               			header('Location: /index.php/UserManagement?Profile&LoginSuccess');
+
 			            }
 			            else
 			            	//Konto nie jest aktywne
@@ -516,7 +517,8 @@ class UserManagement extends CI_Controller{
 			}
 
 			$this->load->view("forms/login_form.php");
-		}
+
+	}
 
 
 	private function activate_user()
@@ -568,7 +570,6 @@ class UserManagement extends CI_Controller{
 		}
 
 	}
-
 
 }
 
