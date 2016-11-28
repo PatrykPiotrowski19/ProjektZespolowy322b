@@ -18,14 +18,13 @@ class UserManagement extends CI_Controller
 		$this->load->model("SessionManager_Model");
 		$this->load->model("UserManagement_Model");
 		
-				$tag['custom_tag'] = "<br><br><br>";
 				$this->load->view("custom_tag",$tag);
 
 		if(isset($_GET["logout_success"]))
 		{
 			
-			echo "<p>Wylogowano się pomyślnie</p>";
-			
+				$tag['info'] = "Wylogowano się pomyślnie";
+				$this->load->view("forms_info",$tag);
 		}
 	
 		
@@ -219,6 +218,8 @@ class UserManagement extends CI_Controller
 						$this->UserManagement_Model->ResetPasswordGenerateLink($row->ID, $token, $expiration_time);
 						$this->UserManagement_Model->ResetPasswordSendMail($row->ADDRESS_TAB2, $token, $expiration_time);
 
+						return 1;
+
 						}
 						else
 						{
@@ -226,6 +227,8 @@ class UserManagement extends CI_Controller
 				  			$this->load->view('forms_err',$arg);  							
 
 							$errors++;
+
+						return 0;
 						}
 					}
 			}
@@ -413,7 +416,7 @@ class UserManagement extends CI_Controller
 				        	$arg['info'] = 'Wszystkie pola muszą być uzupełnione';
 				        	$this->load->view('forms_err',$arg);
 				        }
-				        echo '</font>';
+
 				        
 				        //Jezeli nie ma błędów
 				        if($errors == 0){
@@ -432,7 +435,9 @@ class UserManagement extends CI_Controller
 				            	))
 				            	{				          
 				        		$arg['info'] = 'Konto zostało pomyślnie utworzone';
-				  				$this->load->view('forms_info',$arg); 
+				  				$this->load->view('forms_info',$arg);
+
+				  				return 1; 
 				  		}	
 				        else{
 
@@ -500,12 +505,15 @@ class UserManagement extends CI_Controller
 								$this->SessionManager_Model->SetUserSession($this->username);
 		               			header('Location: /index.php/UserManagement?Profile&LoginSuccess');
 
+		               			return 1;
 			            }
 			            else
 			            	//Konto nie jest aktywne
 			            {
 			            	$arg['info'] = 'Musisz aktywować swoje konto, link z aktywacją konta został wysłany na twoją skrzynkę pocztową';
 					        $this->load->view('forms_err',$arg);
+
+					        return 0;
 			            }
 		           
 		            }
@@ -513,6 +521,8 @@ class UserManagement extends CI_Controller
 		            {	
 			            $arg['info'] = 'Niepoprawny login/haslo bądź podany użytkownik nie istnieje';
 					    $this->load->view('forms_err',$arg);
+
+					    return -1;
 		            }
 		        }		        
 			}
@@ -520,7 +530,6 @@ class UserManagement extends CI_Controller
 			$this->load->view("forms/login_form.php");
 
 	}
-
 
 	private function activate_user()
 	{
@@ -533,8 +542,6 @@ class UserManagement extends CI_Controller
 
 			$exp_time = $row->expiration_time;
 			$user_id = $row->user_id;
-
-			echo "ID uzytkownika: ".$user_id;
 
 			$date = new DateTime();
 
@@ -560,6 +567,7 @@ class UserManagement extends CI_Controller
 
 
 				$this->load->view("forms/login_form.php");
+
 				}
 
 		}
@@ -571,6 +579,32 @@ class UserManagement extends CI_Controller
 		}
 
 	}
+
+		public function UnitTest()
+	{
+		error_reporting(E_ALL ^ E_NOTICE);	
+		$this->load->database();
+		$this->load->library('email');
+
+		$this->load->model("SessionManager_Model");
+		$this->load->model("UserManagement_Model");
+
+
+		$this->load->library('unit_test');
+
+		$_POST["login"] = "Admin";
+		$_POST["password"] = "1";
+		echo $this->unit->run($this->login_attempt(), 0,"Logowanie do nieaktywnego konta");
+		$_POST["submit_reset_password"] = 1; $_POST["email"] = "patryk.piotrowski19@gmail.com";
+		echo $this->unit->run($this->reset_password(),1,"Wyslanie formularzu resetowania hasla (poprawny mail)");
+		$_POST["submit_reset_password"] = 1; $_POST["email"] = "patryk.piotro.wski19@gmail.com";		
+		echo $this->unit->run($this->reset_password(),0,"Wyslanie formularzu resetowania hasla (niepoprawny mail)");
+		$_POST["submit_reset_password"] = 1; $_POST["token_pass"] = 0; $_POST["password"] = 0;
+		echo $this->unit->run($this->reset_password2(),0,"Zmiana hasla przy niepoprawnym linku resetującym hasło");
+
+
+	}
+
 
 }
 

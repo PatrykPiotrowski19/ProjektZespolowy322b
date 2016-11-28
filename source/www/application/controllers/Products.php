@@ -62,11 +62,7 @@ class Products extends CI_Controller
 
 		}
 
-
-
-
 	}
-
 
 	private function show_item($ID)
 	{
@@ -77,7 +73,7 @@ class Products extends CI_Controller
 		{
 				$arg["info"] = "Produkt o podanym ID nie istnieje";
 				$this->load->view("forms_err2",$arg);
-				return;
+				return 0;
 		}
 
 		$arg["ID"] = $result->ID;
@@ -88,6 +84,7 @@ class Products extends CI_Controller
 
 		$this->load->view("product_info",$arg);
 
+		return 1;
 	}
 
 	private function show_category($Category_ID)
@@ -103,6 +100,8 @@ class Products extends CI_Controller
 
 				$data['name'] = $result;
 				$this->load->view('content/category_list',$data);
+
+				return 1;
 			}
 			else
 			{
@@ -139,6 +138,7 @@ class Products extends CI_Controller
 				$data['data'] = $result;
 				$this->load->view("content/show_products",$data);
 
+				return 1;
 			}
 
 		}
@@ -167,6 +167,7 @@ class Products extends CI_Controller
 			$this->load->view("forms_err2",$arg);
 
 		}
+
 
 	}
 
@@ -300,8 +301,27 @@ class Products extends CI_Controller
 			$this->load->view("forms_err2",$arg);
 
 		}
+
 	}
 
+	public function UnitTest()
+	{
+		$this->load->model("SessionManager_Model");
+		$this->load->model("MainPage_Model");
+		$this->load->model("Products_Model");
+
+
+		$this->load->library('unit_test');
+		
+		echo $this->unit->run($this->show_item(1), 1,"Wyświetlanie przedmiotu, ktory isnieje w bazie danych");
+		echo $this->unit->run($this->show_item(17), 1,"Wyświetlanie przedmiotu, ktory nie isnieje w bazie danych");
+		echo $this->unit->run($this->show_category(1), 1,"Wyświetlanie kategorii, które istnieje w bazie danych");
+		echo $this->unit->run($this->show_category(16), 1,"Wyświetlanie kategorii, które nie istnieje w bazie danych");
+		echo $this->unit->run($this->show_subcategory_products(1), 1,"Wyświetlanie podkategorii, które nie istnieje w bazie danych");
+		echo $this->unit->run($this->show_subcategory_products(595), 1,"Wyświetlanie podkategorii, które nie istnieje w bazie danych");
+
+
+	}
 
 
 }
