@@ -20,16 +20,10 @@ class Products extends CI_Controller
 		}
 
 
-
-		if(isset($_POST["DodajPrzedmiot"]))
-		{
-			$this->insert_product();
-		}
-
-
 		if(isset($_GET["AddNewProduct"]))
 		{
-			$this->add_new();
+				$this->insert_product();
+
 		}
 
 		//Wyswietlanie produktów
@@ -64,10 +58,19 @@ class Products extends CI_Controller
 
 	}
 
+
+
 	private function show_item($ID)
 	{
 
 		$result = $this->Products_Model->DisplayProductInfo($ID);
+
+		if(isset($_POST["AddToCart"]) && !empty($_POST["koszyk_ilosc"]))
+		{
+
+			$this->add_to_cart($_GET["ShowProduct"], $_POST["koszyk_ilosc"]);
+
+		}
 
 		if(is_numeric($result))
 		{
@@ -76,11 +79,19 @@ class Products extends CI_Controller
 				return 0;
 		}
 
+		$this->load->model("Cart_Model");
+
 		$arg["ID"] = $result->ID;
 		$arg["nazwa"] = $result->nazwa_produktu;
 		$arg["cena"] = $result->cena_produktu;
 		$arg["ilosc"] = $result->ilosc;
 		$arg["opis"] = $result->opis;
+		$arg["count"] = $this->Cart_Model->ReturnProductCount($result->ID);
+
+
+
+		$result2 = $this->Products_Model->GetImageUrl($arg["ID"]);
+		$arg["img"] = $result2;
 
 		$this->load->view("product_info",$arg);
 
@@ -90,30 +101,30 @@ class Products extends CI_Controller
 	private function show_category($Category_ID)
 	{
 
-			if($this->Products_Model->CategoryExist($Category_ID))
-			{
-				if($this->Products_Model->CategoryIsNotEmpty($Category_ID)){
-				$result = $this->Products_Model->GetSubcategoryList($Category_ID);
+				if($this->Products_Model->CategoryExist($Category_ID))
+				{
+					if($this->Products_Model->CategoryIsNotEmpty($Category_ID)){
+					$result = $this->Products_Model->GetSubcategoryList($Category_ID);
 
-				$category_name['name'] = $this->Products_Model->GetCategoryNameByID($Category_ID);
-				$this->load->view('content/category_name',$category_name);
+					$category_name['name'] = $this->Products_Model->GetCategoryNameByID($Category_ID);
+					$this->load->view('content/category_name',$category_name);
 
-				$data['name'] = $result;
-				$this->load->view('content/category_list',$data);
+					$data['name'] = $result;
+					$this->load->view('content/category_list',$data);
 
-				return 1;
-			}
-			else
-			{
-				$arg['info'] = 'Brak podkategorii';
-				$this->load->view('forms_err2',$arg);
-			}
-		}
-		else
-		{
-			$arg['info'] = 'Kategoria nie istnieje';
-			$this->load->view('forms_err2',$arg);
-		}
+					return 1;
+				}
+				else
+				{
+					$arg['info'] = 'Brak podkategorii';
+					$this->load->view('forms_err2',$arg);
+				}
+				}
+				else
+				{
+					$arg['info'] = 'Kategoria nie istnieje';
+					$this->load->view('forms_err2',$arg);
+				}
 
 	}
 
@@ -151,26 +162,6 @@ class Products extends CI_Controller
 	}
 
 
-	private function add_new()
-	{		
-		//Jezeli uzytkownik ma uprawnienia
-		if($this->SessionManager_Model->IsAdmin())
-		{
-
-			$this->load->view("forms/add_product");
-
-		}
-		else
-		{
-
-			$arg["info"] = "Nie posiadasz uprawnień do tej strony";
-			$this->load->view("forms_err2",$arg);
-
-		}
-
-
-	}
-
 	private function insert_product()
 	{
 
@@ -181,6 +172,8 @@ class Products extends CI_Controller
 
 			$errors = 0;
 
+			if(isset($_POST["DodajPrzedmiot"]))
+			{
 			require_once("ValidateModule/ValidateModule.php");
 			$validate_class = new AddProductValidate();
 			$validate_class->AddVariables(
@@ -209,6 +202,7 @@ class Products extends CI_Controller
 
 
 			$result = $validate_class->GetResult();
+
 
 			if(!$result[0])
 			{
@@ -251,14 +245,16 @@ class Products extends CI_Controller
 				$this->load->view('forms_err',$arg);
 				$errors++;
 			}
+
+
 			if(empty($_POST["Zdjecie1"]))
 			{
-				//$arg['info'] = 'Nie dodałeś zdjęcia';
-				//$this->load->view('forms_err',$arg);
-				//$errors++;				
+				$arg['info'] = 'Nie dodałeś zdjęcia (przynajmniej jedno jest wymagane)';
+				$this->load->view('forms_err',$arg);
+				$errors++;				
 			}
 
-
+			echo $errors;
 			//Jezeli wprowadzone dane są poprawne i spełniają wymogi
 			if($errors == 0)
 			{
@@ -266,32 +262,51 @@ class Products extends CI_Controller
 				{
 					$arg['info'] = 'Wprowadzona kategoria nie istnieje';
 					$this->load->view('forms_err',$arg);
-					$_POST["createcategory"] = 0;
-					return;
+					$arguments['Utworz_kategorie'] = 1;
+					$errors++;
 				}
 				if(!$this->Products_Model->IsSubcategoryExist($_POST["Podkategoria"]))
 				{
 					$arg['info'] = 'Wprowadzona podkategoria nie istnieje';
 					$this->load->view('forms_err',$arg);
-					$_POST["createsubcategory"] = 0;
-					return;			
+					$arguments['Utworz_podkategorie'] = 1;		
+					$errors++;
 				}
 
-			}
+			
 
 			//Dodaję nowy produkt do bazy danych
+		if($errors == 0 && $_POST["DodajPrzedmiot"] == "DodajPrzedmiot")
+		{
 
-			$this->Products_Model->InsertProductToDatabase(
-		$_POST["Podkategoria"],
-		$_POST["NazwaPrzedmiotu"],
-		$_POST["Cena"],
-		$_POST["Ilosc"],
-		$_POST["Opis"]
-		);
+				$this->Products_Model->InsertProductToDatabase(
+			$_POST["Podkategoria"],
+			$_POST["NazwaPrzedmiotu"],
+			$_POST["Cena"],
+			$_POST["Ilosc"],
+			$_POST["Opis"],
+			$_POST["Zdjecie1"],
+			$_POST["Zdjecie2"],
+			$_POST["Zdjecie3"],
+			$_POST["Zdjecie4"]
+			);
 
+				header('Location: /index.php/Products?Success');
+			}
+		}
+			}
 
-		header('Location: /index.php//Products?Success');	
-
+			$arguments['Kategoria'] = $_POST["Kategoria"];
+			$arguments['Podkategoria'] = $_POST["Podkategoria"];
+			$arguments["NazwaPrzedmiotu"] = $_POST["NazwaPrzedmiotu"];
+			$arguments["Ilosc"] = $_POST["Ilosc"];
+			$arguments["Cena"] = $_POST["Cena"];
+			$arguments["Zdj1"] =$_POST["Zdjecie1"];
+			$arguments["Zdj2"] =$_POST["Zdjecie2"];
+			$arguments["Zdj3"] =$_POST["Zdjecie3"];
+			$arguments["Zdj4"] =$_POST["Zdjecie4"];
+			$this->load->view("forms/add_product",$arguments);
+		
 
 		}
 		else
@@ -303,6 +318,26 @@ class Products extends CI_Controller
 		}
 
 	}
+
+	private function add_to_cart($item_ID, $count)
+	{
+		if($this->Products_Model->CountProductItems($item_ID) >= $count)
+		{
+
+			$this->load->model("Cart_Model");
+			$this->Cart_Model->AddNewItemToCart($item_ID, $count);
+			header('Location: /index.php/Products?ShowProduct='.$item_ID.'');
+
+		}
+		else
+		{
+			$arguments["info"] = "Przykro nam, nie mamy takiej ilości przedmiotów w magazynie.";
+			$this->load->view("forms_err2",$arguments);
+
+		}
+
+	}
+
 
 	public function UnitTest()
 	{
@@ -319,7 +354,6 @@ class Products extends CI_Controller
 		echo $this->unit->run($this->show_category(16), 1,"Wyświetlanie kategorii, które nie istnieje w bazie danych");
 		echo $this->unit->run($this->show_subcategory_products(1), 1,"Wyświetlanie podkategorii, które nie istnieje w bazie danych");
 		echo $this->unit->run($this->show_subcategory_products(595), 1,"Wyświetlanie podkategorii, które nie istnieje w bazie danych");
-
 
 	}
 

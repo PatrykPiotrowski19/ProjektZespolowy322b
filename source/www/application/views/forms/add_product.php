@@ -8,63 +8,57 @@
       <dt>
         <label for="Kategoria">Kategoria</label>
       </dt>
-      <dd><input type="text" id="Kategoria" name="Kategoria" value="<?php echo $_POST["Kategoria"]; ?>" /></dd>
-                <?php if(isset($_POST["createcategory"]))  echo ' <button type="submit" name="DodajPrzedmiot" value="DodajPrzedmiot1" style="color:red"><b>Dodaj nową kategorię</b></button>'; ?>
+      <dd><input type="text" id="Kategoria" name="Kategoria" value="<?php echo $Kategoria; ?>" /></dd>
+                <?php if(isset($Utworz_kategorie))  echo ' <button type="submit" name="DodajPrzedmiot" value="DodajPrzedmiot1" style="color:red"><b>Dodaj nową kategorię</b></button>'; ?>
     </dl>
     <dl>
       <dt>
         <label for="Podkategoria">Podkategoria</label>
       </dt>
-      <dd><input type="text" id="Podkategoria" name="Podkategoria"  value="<?php echo $_POST["Podkategoria"]; ?>" /></dd>
-      <?php if(isset($_POST["createsubcategory"]))  echo ' <button type="submit" name="DodajPrzedmiot" value="DodajPrzedmiot2" style="color:red"><b>Dodaj nową podkategorię</b></button>'; ?>
+      <dd><input type="text" id="Podkategoria" name="Podkategoria"  value="<?php echo $Podkategoria; ?>" /></dd>
+      <?php if(isset($Utworz_podkategorie))  echo ' <button type="submit" name="DodajPrzedmiot" value="DodajPrzedmiot2" style="color:red"><b>Dodaj nową podkategorię</b></button>'; ?>
     </dl>
     <dl>
       <dt>
         <label for="NazwaPrzedmiotu">Nazwa przedmiotu</label>
       </dt>
-      <dd><input type="text" id="NazwaPrzedmiotu" name="NazwaPrzedmiotu"  value="<?php echo $_POST["NazwaPrzedmiotu"]; ?>" /></dd>
+      <dd><input type="text" id="NazwaPrzedmiotu" name="NazwaPrzedmiotu"  value="<?php echo $NazwaPrzedmiotu; ?>" /></dd>
     </dl>
     <dl>
       <dt>
         <label for="Ilosc">Ilość</label>
       </dt>
-      <dd><center><input type="number" id="Ilosc" class="digits" name="Ilosc" min="1"  value="<?php echo $_POST["Ilosc"]; ?>" /></center></dd>
+      <dd><center><input type="number" id="Ilosc" class="digits" name="Ilosc" min="1"  value="<?php echo $Ilosc; ?>" /></center></dd>
     </dl>
     <dl>
       <dt>
         <label for="Ilosc">Cena</label>
       </dt>
-      <dd><input type="number" id="Cena" class="digits" name="Cena" min="0.01" step="0.01" value="<?php echo $_POST["Cena"]; ?>" /></dd>
+      <dd><input type="number" id="Cena" class="digits" name="Cena" min="0.01" step="0.01" value="<?php echo $Cena; ?>" /></dd>
     </dl>
     <dl>
       <dt>
-        <label for="Zdjecie1">Zdjęcie #1</label>
+        <label for="Zdjecie1">Url Zdjęcia #1 <font color="red">wymagane</font></label>
       </dt>
-      <dd><input type="file" id="Zdjecie1" name="Zdjecie1" /></dd>
+      <dd><input type="text" size="50" id="Zdjecie1" name="Zdjecie1" value="<?php echo $Zdj1; ?>" /></dd>
     </dl>
     <dl>
       <dt>
-        <label for="Zdjecie2">Zdjęcie #2</label>
+        <label for="Zdjecie2">Url Zdjęcia #2</label>
       </dt>
-      <dd><input type="file" id="Zdjecie2" name="Zdjecie2" /></dd>
+      <dd><input type="text" size="50" id="Zdjecie2" name="Zdjecie2" value="<?php echo $Zdj2; ?>" /></dd>
     </dl>
     <dl>
       <dt>
-        <label for="Zdjecie3">Zdjęcie #3</label>
+        <label for="Zdjecie3">Url Zdjęcia #3</label>
       </dt>
-      <dd><input type="file" id="Zdjecie3" name="Zdjecie3" /></dd>
+      <dd><input type="text" size="50" id="Zdjecie3" name="Zdjecie3"  value="<?php echo $Zdj3; ?>"/></dd>
     </dl>
     <dl>
       <dt>
-        <label for="Zdjecie4">Zdjęcie #4</label>
+        <label for="Zdjecie4">Url Zdjęcia #4</label>
       </dt>
-      <dd><input type="file" id="Zdjecie4" name="Zdjecie4" /></dd>
-    </dl>
-    <dl>
-      <dt>
-        <label for="Zdjecie5">Zdjęcie #5</label>
-      </dt>
-      <dd><input type="file" id="Zdjecie5" name="Zdjecie5" /></dd>
+      <dd><input type="text" size="50" id="Zdjecie4" name="Zdjecie4"  value="<?php echo $Zdj4; ?>"/></dd>
     </dl>
     <dl>
       <dt>

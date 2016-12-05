@@ -17,8 +17,10 @@ $ci->load->model("MainPage_Model");
 </head>
 
 <body style="height: 100%;  font-family: Lato,sans-serif; text-align: center; font-size:16px">
-<div id="menu" ><a href="/index.php"><img src="/visual/img/logo.png" align="left" height="50px" width="320px"></img></a>
+<div id="menu" ><a href="/index.php"><img src="/visual/img/logo.png" align="left" height="50px" width="230px"></img></a>
+<a href="/index.php/Cart"><img src="/visual/img/cart.png" align="left" height="50px" width="135px"></img></a>
  <ol>
+
 
  <?php
 

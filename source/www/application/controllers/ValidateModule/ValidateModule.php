@@ -140,7 +140,7 @@ class AddProductValidate extends ValidateModule
 	private function ValidateCategory($str)
 	{
 
-		if(preg_match('/^[A-Za-z]{1,32}$/D', $str))
+		if(!empty($str) && strlen($str) < 32)
 			return 1;
 
 		return 0;
@@ -150,7 +150,7 @@ class AddProductValidate extends ValidateModule
 	private function ValidateSubcategory($str)
 	{
 
-		if(preg_match('/^[A-Za-z]{1,32}$/D', $str))
+		if(!empty($str) && strlen($str) < 32)
 			return 1;
 
 		return 0;
@@ -160,7 +160,7 @@ class AddProductValidate extends ValidateModule
 	private function ValidateItemName($str)
 	{
 
-		if(preg_match('/^[A-Za-z0-9]{1,64}$/D', $str))
+		if(!empty($str) && strlen($str) < 64)
 			return 1;
 
 		return 0;

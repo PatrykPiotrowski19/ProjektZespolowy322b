@@ -18,7 +18,6 @@ class UserManagement extends CI_Controller
 		$this->load->model("SessionManager_Model");
 		$this->load->model("UserManagement_Model");
 		
-				$this->load->view("custom_tag",$tag);
 
 		if(isset($_GET["logout_success"]))
 		{

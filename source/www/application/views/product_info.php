@@ -9,7 +9,24 @@ if(isset($nazwa))
 
 
 <table align="left">
-<tr><td width="270"><img width="250" src="http://cellutronics.co.nz/images/Sony_Xperia_M.png"></td></tr>
+"<?php
+$iter = 0;
+foreach($img as $i)
+{
+
+	if($iter == 0)
+	{
+ 		 echo '<tr><td width="270"><img width="250" src="'.$i->imagename.'"><br>';
+	}
+	else
+	{
+		echo '<img width="80" src="'.$i->imagename.'">';
+	}
+
+
+  $iter++;
+}
+  ?></td>
 </table>
 
 <table align="left">
@@ -17,15 +34,46 @@ if(isset($nazwa))
 <td width="45"></td><td width="720" align="left" color="#5a98ff" style="color: #5a98ff"><font size="10"><?php echo $nazwa; ?></font></p></td></tr>
 </td><td></td><td align="left"><font size="6" color="orange">Cena: <?php echo $cena ?>zł</font></td></tr>
 <td></td><td align="left"><font size="5" color="orange">Ilość: <?php echo $ilosc  ?> szt</font></td></tr>
-<tr><td></td><td align="right"><input type="submit" value="Dodaj do koszyka" name="dodaj_do_koszyka"></td></tr>
-<tr><td></td><td align="right"><input type="submit" value="         KUP!         " name="kup"></td></tr>
 
+<tr><td></td><td align="right">
+<?php
+if($count > 0)
+	{
+		echo '<center><div><p><font style="font-size:30px;"><font style="color:white">Obecnie posiadasz w koszyku:</font><font style="color:green;"> '.$count.' przedmiotów</font></font></p></div></center>';
+	}
+?>
+
+<table align="right" width="200" style="background-color: silver;" height="150">
+<tr><td>
+<center>
+
+
+
+
+<form action="/index.php/Products?ShowProduct=<?php echo $ID; ?>" method="POST">
+<p style="font-size:18px;">
+<?php
+
+if($count>0)
+	echo 'Wprowadź nową ilość</p>';
+else
+	echo 'Wprowadz ilość</p>';
+?>
+<input type="number" name="koszyk_ilosc" max="<?php echo $ilosc; ?>" min="1" style="font-size:20px;"></p>
+<input type="submit" value="Dodaj do koszyka" name="AddToCart" style="font-size:20px;"><br><br>
+<input type="submit" value="KUP!" name="AddToCart" style="font-size:20px;">
+</form>
+</center>
+</td></tr>
+</table>
+</td></tr>
 <tr><td></td><td align="left" style="color:white; font-size:22px;">Opis produktu:</td></tr>
 <tr><td></td><td align="left" width="400" style="color:white; font-size:16px;"><?php echo $opis ?></td></tr>
 </table>
 
 
 <div id="tak" width="230" height="230" style="background-color: white;">
+
 </div>
 
 <?php

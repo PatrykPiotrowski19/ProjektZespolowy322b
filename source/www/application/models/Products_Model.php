@@ -29,6 +29,40 @@ class Products_Model extends CI_Model
 
 	}
 
+	public function GetImageUrl($ID)
+	{
+		if(is_numeric($ID))
+		{
+			$query = $this->db->query("SELECT * FROM `product_image` WHERE `product_id` = ".$ID.";");
+
+			if($query->num_rows()>0)
+			{
+				return $query->result();
+			}
+			return 0;
+		}
+		return 0;
+	}
+
+	public function GetMainProductImage($ID)
+	{
+		if(is_numeric($ID))
+		{
+			$query = $this->db->query("SELECT * FROM `product_image` WHERE `product_id` = ".$ID." AND `image_id` = 1;");
+
+			if($query->num_rows()>0)
+			{
+
+				foreach($query->result() as $row)
+
+				return $row->imagename;
+		
+			}
+			return 0;
+		}
+		return 0;
+	}
+
 	public function CategoryExist($ID)
 	{
 		if(is_numeric($ID))
@@ -143,7 +177,6 @@ class Products_Model extends CI_Model
 		return 0;
 
 
-
 	}
 
 
@@ -166,9 +199,7 @@ class Products_Model extends CI_Model
 		}
 		return 0;
 
-
 	}
-
 
 
 	public function ShowProductList($ID, $Maximum)
@@ -201,7 +232,6 @@ class Products_Model extends CI_Model
 		return 0;
 
 	}
-
 
 
 	public function IsCategoryExist($Category_Name)
@@ -307,18 +337,41 @@ class Products_Model extends CI_Model
 
 	}
 
+	private function InsertNewImage($Product_ID, $ID, $URL)
+	{
+		$URL = addslashes($URL);
+
+		$query = $this->db->query("INSERT INTO `product_image` (
+			`ID`, 
+			`product_id`, 
+			`image_id`, 
+			`imagename`) VALUES (
+			NULL, 
+			'".$Product_ID."', 
+			'".$ID."', 
+			'".$URL."');");
+
+	}
+
+
+
 	public function InsertProductToDatabase(
 		$Subcategory_Name,
 		$Product_Name,
 		$Product_Price,
 		$Product_Count,
-		$Product_Description
+		$Product_Description,
+		$image1,
+		$image2,
+		$image3,
+		$image4
 		)
 	{
 
 		$Subcategory_ID = $this->GetSubcategoryIDByName($Subcategory_Name);
 		$Products_Name = addslashes($Product_Name);
 		$Product_Price = round($Product_Price,2);
+		$Product_Description = addslashes($Product_Description);
 
 		$query = $this->db->query("INSERT INTO `product` (
 			`ID`, 
@@ -339,20 +392,39 @@ class Products_Model extends CI_Model
 
 		$Product_ID = $this->GetProductIDByName($Product_Name);
 
-		$query = $this->db->query("INSERT INTO `product_image` (
-			`ID`, 
-			`product_id`, 
-			`image_id`, 
-			`imagename`) VALUES (
-			NULL, 
-			'".$Product_ID."', 
-			'1', 
-			'1_01.png');");
-
+		if(!empty($image1))
+			$this->InsertNewImage($Product_ID, 1, $image1);
+		if(!empty($image2))
+			$this->InsertNewImage($Product_ID, 2, $image2);
+		if(!empty($image3))
+			$this->InsertNewImage($Product_ID, 3, $image3);
+		if(!empty($image4))
+			$this->InsertNewImage($Product_ID, 4, $image4);
 
 	}
 
 
+	public function CountProductItems($Product_ID)
+	{
+
+		if(is_numeric($Product_ID))
+		{
+			$query = $this->db->query("SELECT `ilosc` FROM `product` WHERE `ID` = ".$Product_ID.";");
+
+			if($query->num_rows() > 0)
+			{
+
+			foreach($query->result() as $row){
+
+				return $row->ilosc;
+			}
+
+			}
+		return 0;
+
+		}
+		return 0;
+	}
 }
 
 ?>

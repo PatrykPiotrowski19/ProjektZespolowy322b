@@ -14,7 +14,7 @@ $iteration = 0;
    foreach($data as $i){ 
    	?>
 
-   	<td><a href="/index.php/Products?ShowProduct=<?php echo $i->ID;   ?>"><img src="/visual/product_images/<?php echo $i->imagename; ?>" width="250"></a><p><font style="color:#77baff"><b><?php echo $i->nazwa_produktu; ?></b></p><p><font style="color: orange; text-align: left"><?php echo $i->cena_produktu; ?>zł</p></font></td>
+   	<td><a href="/index.php/Products?ShowProduct=<?php echo $i->ID;   ?>"><img src="<?php echo $i->imagename; ?>" width="250"></a><p><font style="color:#77baff"><b><?php echo $i->nazwa_produktu; ?></b></p><p><font style="color: orange; text-align: left"><?php echo $i->cena_produktu; ?>zł</p></font></td>
 
 
 
