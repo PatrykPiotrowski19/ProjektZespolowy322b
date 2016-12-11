@@ -38,4 +38,4 @@ $sum = 0;
 
 </table>
 <p style="font-size: 30px; color: white;">Razem: <?php echo $sum;  ?>zł</p>
-<a href="/index.php/Cart?Checkout"><input style="font-size: 32px; background-color: orange;"type="submit" name="KUP" value="KUP"></a>
+<a href="/index.php/Cart/Checkout"><input style="font-size: 32px; background-color: orange;"type="submit" name="KUP" value="KUP"></a>

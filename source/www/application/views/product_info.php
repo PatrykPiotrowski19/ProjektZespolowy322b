@@ -33,7 +33,11 @@ foreach($img as $i)
 <tr>
 <td width="45"></td><td width="720" align="left" color="#5a98ff" style="color: #5a98ff"><font size="10"><?php echo $nazwa; ?></font></p></td></tr>
 </td><td></td><td align="left"><font size="6" color="orange">Cena: <?php echo $cena ?>zł</font></td></tr>
-<td></td><td align="left"><font size="5" color="orange">Ilość: <?php echo $ilosc  ?> szt</font></td></tr>
+<td></td><td align="left"><font size="5" color="orange">Ilość: <?php 
+if($ilosc > 0)
+echo $ilosc." szt";
+else
+echo "<font color='red'>BRAK W MAGAZYNIE</font>"; ?></font></td></tr>
 
 <tr><td></td><td align="right">
 <?php
@@ -43,13 +47,17 @@ if($count > 0)
 	}
 ?>
 
-<table align="right" width="200" style="background-color: silver;" height="150">
+<table align="right" width="200" height="150">
 <tr><td>
 <center>
 
 
 
-
+<?php 
+if($ilosc > 0)
+{
+	?>
+<div style="background-color: silver">
 <form action="/index.php/Products?ShowProduct=<?php echo $ID; ?>" method="POST">
 <p style="font-size:18px;">
 <?php
@@ -62,6 +70,10 @@ else
 <input type="number" name="koszyk_ilosc" max="<?php echo $ilosc; ?>" min="1" style="font-size:20px;"></p>
 <input type="submit" value="Dodaj do koszyka" name="AddToCart" style="font-size:20px;"><br><br>
 <input type="submit" value="KUP!" name="AddToCart" style="font-size:20px;">
+</div>
+<?php
+}
+?>
 </form>
 </center>
 </td></tr>

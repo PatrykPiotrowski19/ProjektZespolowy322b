@@ -305,6 +305,31 @@ class UserManagement_Model extends CI_Model
 
 	}
 
+
+	public function GetMailAddressFromUserID($ID)
+	{
+		if(is_numeric($ID))
+		{
+
+			$query = $this->db->query("SELECT * FROM `users` WHERE `ID` = ".$ID.";");
+
+			if($query->num_rows() > 0){
+				
+				foreach($query->result() as $row){
+
+					return $row->ADDRESS_TAB2;
+				}
+
+			}
+			return 0;
+
+
+		}
+		return 0;
+	}
+
+
+
 }
 
 ?>

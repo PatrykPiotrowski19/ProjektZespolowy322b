@@ -43,11 +43,36 @@ class SessionManager_Model extends CI_Model
 
 	}
 
+	public function GetUserID()
+	{
+
+		if($this->IsLogged())
+		{
+			$query = $this->db->query("SELECT * FROM `users` WHERE `LOGIN` = '".$this->GetUsername()."';");
+
+			if($query->num_rows() == 1)
+			{
+
+				foreach($query->result() as $row){
+
+				$value = $row->ID;
+
+				return $value;
+			}
+
+
+		}
+		return 0;
+
+		}
+		return 0;
+	}
+
 
 	public function IsAdmin()
 	{
 		$this->load->database();
-		$query = $this->db->query("SELECT * FROM `users` WHERE `LOGIN` LIKE '".$this->GetUsername()."'");
+		$query = $this->db->query("SELECT * FROM `users` WHERE `LOGIN` = '".$this->GetUsername()."'");
 
 		if($query->num_rows() == 1 && $this->IsLogged())
 		{

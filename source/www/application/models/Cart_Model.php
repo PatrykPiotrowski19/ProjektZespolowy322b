@@ -31,7 +31,6 @@ class Cart_Model extends CI_Model
 
     			}
 
-
 			}
 			return 0;
 
@@ -43,8 +42,14 @@ class Cart_Model extends CI_Model
 	public function RemoveItem($ID)
 	{
 		if(is_numeric($ID))
-		setcookie("product_cart[$ID]", "", time()-3600);
+		{
+			setcookie("product_cart[$ID]", "", time()-3600);
+			return 1;
+		}
+		return 0;
+
 	}
+
 
 }
 

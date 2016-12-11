@@ -11,7 +11,6 @@ class Products_Model extends CI_Model
 		$this->load->database();
 	}
 
-
 	public function DisplayProductInfo($ID)
 	{
 
@@ -234,6 +233,23 @@ class Products_Model extends CI_Model
 	}
 
 
+	public function RemoveItemsInProduct($Product_ID, $Count)
+	{
+		if(is_numeric($Product_ID) && is_numeric($Count))
+		{
+			$actual_count = $this->CountProductItems($Product_ID);
+			$new_count = $actual_count - $Count;
+
+			$query = $this->db->query("UPDATE `product` SET `ilosc` = '".$new_count."' WHERE `product`.`ID` = ".$Product_ID.";");
+
+			return $query;
+
+		}
+
+		return 0;
+	}
+
+
 	public function IsCategoryExist($Category_Name)
 	{
 		$Category_Name = addslashes($Category_Name);
@@ -425,6 +441,49 @@ class Products_Model extends CI_Model
 		}
 		return 0;
 	}
+
+
+	public function GetDeliveryOptions()
+	{
+
+		$query = $this->db->query("SELECT * FROM `delivery_options`;");
+		
+		if($query->num_rows() > 0)
+		{
+
+			return $query->result();
+
+		}
+		return 0;
+
+
+	}
+
+
+	public function GetDeliveryOption($ID)
+	{
+
+		if(is_numeric($ID))
+		{
+
+			$query = $this->db->query("SELECT * from `delivery_options` WHERE `ID` = ".$ID.";");
+
+			if($query->num_rows()>0)
+			{
+
+				foreach($query->result() as $row){
+
+					return $row;
+				}
+
+			}
+			return 0;
+
+		}
+		return 0;
+	}
+
+
 }
 
 ?>

@@ -17,6 +17,18 @@ class Cart extends CI_Controller
 
 	}
 
+
+	public function Checkout()
+	{
+		$this->load->view('header');
+		$this->load->model("SessionManager_Model");
+		$this->load->model("MainPage_Model");
+		$this->load->model("Products_Model");
+		$this->load->model("Cart_Model");
+		$this->CheckoutDisplayInfo();
+
+	}
+
 	private function ChangeProductCount($Product_ID, $Count)
 	{
 		if(is_numeric($Product_ID) && is_numeric($Count) && $Count > 0)
@@ -67,7 +79,6 @@ class Cart extends CI_Controller
 				$image_url = $this->Products_Model->GetMainProductImage($ID);
 				$product_info = $this->Products_Model->DisplayProductInfo($ID);
 
-				//echo $image_url." ".$product_info->nazwa_produktu." ".$product_info->cena_produktu." ".$value." ".$product_info->cena_produktu*$value."<br>";
 				$img_url[] = $image_url;
 				$product_name[] = $product_info->nazwa_produktu;
 				$product_cost[] = $product_info->cena_produktu;
@@ -93,6 +104,162 @@ class Cart extends CI_Controller
 		}
 
 	}
+
+
+
+	private function CheckoutDisplayInfo()
+	{
+
+		if(isset($_COOKIE["product_cart"]))
+		{
+
+			//Czy uzytkownik jest zalogowany
+			if($this->SessionManager_Model->IsLogged())
+			{
+
+				if(isset($_POST["finalbuy"]))
+				{
+
+					if($this->FinalizeTransaction())
+						{
+
+							$this->load->view("content/checkout_success");
+							return 1;
+						}
+
+
+
+				}
+
+			foreach($_COOKIE['product_cart'] as $name=> $value)
+			{
+
+				$ID = addslashes(htmlspecialchars($name));
+				$value = addslashes(htmlspecialchars($value));
+
+				$image_url = $this->Products_Model->GetMainProductImage($ID);
+				$product_info = $this->Products_Model->DisplayProductInfo($ID);
+
+
+				$img_url[] = $image_url;
+				$product_name[] = $product_info->nazwa_produktu;
+				$product_cost[] = $product_info->cena_produktu;
+				$product_id[] = $product_info->ID;
+ 				$product_count[] = $value;
+
+			}
+
+			$arguments['img_url'] = $img_url;
+			$arguments['product_name'] = $product_name;
+			$arguments['product_cost'] = $product_cost;
+			$arguments['product_count'] = $product_count;
+			$arguments['product_id'] = $product_id;
+
+			$arguments['delivery_option'] = $this->Products_Model->GetDeliveryOptions();
+
+			$this->load->view("content/checkout",$arguments);
+
+
+
+
+			}
+			else
+			{
+			$arguments["info"] = "Musisz być zalogowany w celu finalizacji zamówienia";
+			$this->load->view("forms_err",$arguments);
+			}
+		}
+		else
+		{
+			$arguments["info"] = "Koszyk jest pusty";
+			$this->load->view("forms_info",$arguments);
+		}
+
+	}
+
+
+	private function FinalizeTransaction()
+	{
+		$payment = $this->Products_Model->GetDeliveryOption($_POST["opcjaprzesylki"]);
+		$errors = 0;
+		if($payment->opcja != 0)
+		{
+
+			foreach($_COOKIE['product_cart'] as $name=> $value)
+			{
+
+				$ID = addslashes(htmlspecialchars($name));
+				$value = addslashes(htmlspecialchars($value));
+
+				if($value > $this->Products_Model->CountProductItems($ID))
+				{
+					$product_inf = $this->Products_Model->DisplayProductInfo($ID);
+
+					$arguments["info"] = "Błąd produktu: ".$product_inf->nazwa_produktu." - nie mamy takiej ilości w magazynie.";
+					$this->load->view("forms_err",$arguments);							
+					$errors++;
+				}
+			}			
+
+
+				//Etap dodawania produktu
+				if($errors == 0)
+				{
+					$this->load->model("Transaction_Model");
+
+					$date = new DateTime();
+
+					$Payment_ID =  $this->Transaction_Model->AddNewPayment($this->SessionManager_Model->GetUserID(), 
+						$date->getTimestamp(),
+						$payment->opcja
+						);
+
+
+					foreach($_COOKIE['product_cart'] as $name=> $value)
+					{
+
+						$ID = addslashes(htmlspecialchars($name));
+						$value = addslashes(htmlspecialchars($value));
+
+						$product_inf = $this->Products_Model->DisplayProductInfo($ID);
+						
+						$this->Transaction_Model->InsertNewProductInPayment(
+						$Payment_ID,
+						$product_inf->nazwa_produktu,
+						$product_inf->cena_produktu,
+						$value
+						);
+
+						$this->Products_Model->RemoveItemsInProduct($product_inf->ID, $value);
+
+					}
+
+					$this->load->model("UserManagement_Model");
+
+
+					$this->Transaction_Model->SendTransactionMail(
+					$this->UserManagement_Model->GetMailAddressFromUserID($this->SessionManager_Model->GetUserID()),
+					$Payment_ID);
+
+
+					return 1;
+				}
+
+			return 0;
+		}
+		else
+		{
+
+			$arguments["info"] = "Niepoprawna opcja przesyłki";
+			$this->load->view("forms_err",$arguments);		
+			return 0;	
+
+		}
+
+		return 0;
+
+	}
+
 
 }
 
