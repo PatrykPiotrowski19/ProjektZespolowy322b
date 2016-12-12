@@ -87,7 +87,8 @@ class Transaction_Model extends CI_Model
 
 			$query = $this->db->query("SELECT * FROM `payments` WHERE `ID` = ".$Transaction_ID." ;");
 
-				return $query->result();
+				foreach($query->result() as $row)
+					return $row;
 
 			return 0;
 
@@ -101,9 +102,10 @@ class Transaction_Model extends CI_Model
 		if(is_numeric($ID))
 		{
 
-			$query = $this->db->query("SELECT * FROM `delivery_option` WHERE `ID` = ".$ID.";");
-			if($query->num_rows()>0)
-				return $query->result();
+			$query = $this->db->query("SELECT * FROM `delivery_options` WHERE `ID` = ".$ID.";");
+
+				foreach($query->result() as $row)
+					return $row;
 
 			return 0;
 
@@ -114,31 +116,51 @@ class Transaction_Model extends CI_Model
 
 	public function SendTransactionMail($Mail_address, $Transaction_ID)
 	{
+		$this->load->model("SessionManager_Model");
 
-
-		$string_message = "Witaj<br>dokonałeś u nas zakupu:<br>";
+		$string_message = "Witaj ".$this->SessionManager_Model->GetUsername()." dokonałeś u nas zakupu następujących przedmiotów:<br><br><br>";
 		$suma = 0;
 
 		$result = $this->GetTransactionProductsByPaymentID($Transaction_ID);
 
-		//$transaction_info = $this->GetTransactionInfoByID($Transaction_ID);
+		$transaction_info = $this->GetTransactionInfoByID($Transaction_ID);
 
-		//$delivery_info = $this->GetDeliveryInfoByID($transaction_info->delivery_id);
+		$delivery_info = $this->GetDeliveryInfoByID($transaction_info->delivery_id);
+
+		$delivery_description = $delivery_info->nazwa_przesylki." za ".$delivery_info->koszt." zł.<br>";
+
+		$suma += $delivery_info->koszt;
+
+		$string_message = $string_message."<table border='1' style='background-color:silver;'>
+		<td align='center' width='240'><b>Nazwa przedmiotu</b></td><td width='80' align='center'><b>Cena</b></td><td align='center' width='100'><b>Ilość sztuk</b></td><td width='80' align='center'><b>Razem</b></td></tr>
+
+		";
 
 		foreach($result as $res)
 		{
 
-			$string_message = $string_message.$res->product_name." <b> ".$res->product_cost." zł</b> * <i> ".$res->product_count." szt</i> = <i>".$res->product_cost*$res->product_count." zł</i><br>";
+			$string_message = $string_message."<tr><td align='center'>".$res->product_name."</td><td align='center'>".$res->product_cost." zł</td><td align='center'>".$res->product_count." szt</td><td align='center'>".$res->product_cost*$res->product_count." zł</td></tr>";
 
 			$suma = $suma + $res->product_count * $res->product_cost;
 		}
+		$string_message = $string_message."<tr><td align='center'>Dostawa ".$delivery_info->nazwa_przesylki."</td><td align='center'>".$delivery_info->koszt." zł</td><td align='center'>1 szt</td><td align='center'>".$delivery_info->koszt." zł</td></tr>";		
 
-		$string_message = $string_message."<br>Łączna kwota do zapłaty: ".$suma." zł<br>";
+		$string_message = $string_message."<tr><td></td><td></td><td></td><td align='center'><b>Suma</b><br>".$suma." zł</td></tr>";
+		$string_message = $string_message.'</table>';
 
-		$string_message = $string_message."Na wpłatę na konto czekamy 24 godziny, w przeciwnym wypadku Twoje zamówienie zostanie anulowane.<br><b>Dane firmy:<br>Sklep internetowy sp. z.o.o.<br>al. Wolności 31<br>71-064 Szczecin<br>NIP: 1234567890, REGON 123456789<br><br>Konto bankowe:<br>00 0000 0000 0000 0000 0000 0000 0001<br>ING BANK ŚLĄSKI S.A. O./Szczecin<br></b><br>Pozdrawiamy i czekamy na dalsze zakupy,<br>Zespół Sklepu Internetowego";
+
+		if($delivery_info->opcja == 1)
+		$string_message = $string_message."<br><font color='red'>Na wpłatę na konto czekamy 24 godziny, w przeciwnym wypadku Twoje zamówienie zostanie anulowane.</font><br><br><b>Tytuł przelewu: </b><i>Płatność numer ".$transaction_info->ID."</i>
+		<br>
+		<b>Dane firmy:<br>Sklep internetowy sp. z.o.o.<br>al. Wolności 31<br>71-064 Szczecin<br>NIP: 1234567890, REGON 123456789<br><br> Konto bankowe:<br>00 0000 0000 0000 0000 0000 0000 0001<br>ING BANK ŚLĄSKI S.A. O./Szczecin<br></b><br>";
+
+		$string_message = $string_message."<br><br>Twoja przeysłka zostanie solidnie zapakowana i wysłana na dane adresowe Twojego Konta.<br><br>Pozdrawiamy i czekamy na dalsze zakupy,<br><i>Zespół Sklepu Internetowego</i>";
 
 		$Mail_address = addslashes($Mail_address);
 		$Transaction_ID = addslashes($Transaction_ID);
+
+
+		echo $string_message;
 
 		$this->load->library('email');
 		$this->email->set_mailtype("html");

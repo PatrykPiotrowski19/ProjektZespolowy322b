@@ -50,6 +50,22 @@ class Cart_Model extends CI_Model
 
 	}
 
+	public function ClearCart()
+	{
+
+			if(isset($_COOKIE["product_cart"]))
+			{
+
+    			foreach ($_COOKIE['product_cart'] as $name => $value) 
+    			{
+
+        		echo $this->RemoveItem($name);
+        		
+    			}
+
+			}
+	}
+
 
 }
 

@@ -466,7 +466,7 @@ class Products_Model extends CI_Model
 		if(is_numeric($ID))
 		{
 
-			$query = $this->db->query("SELECT * from `delivery_options` WHERE `ID` = ".$ID.";");
+			$query = $this->db->query("SELECT * from `delivery_options` WHERE `ID` = ".$ID." ;");
 
 			if($query->num_rows()>0)
 			{

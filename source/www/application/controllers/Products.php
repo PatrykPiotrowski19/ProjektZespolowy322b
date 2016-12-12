@@ -68,7 +68,13 @@ class Products extends CI_Controller
 		if(isset($_POST["AddToCart"]) && !empty($_POST["koszyk_ilosc"]))
 		{
 
-			$this->add_to_cart($_GET["ShowProduct"], $_POST["koszyk_ilosc"]);
+			if($_POST["AddToCart"] == "KUP!")
+				$this->add_to_cart($_GET["ShowProduct"], $_POST["koszyk_ilosc"],1);
+			else
+				$this->add_to_cart($_GET["ShowProduct"], $_POST["koszyk_ilosc"],0);
+
+
+
 
 		}
 
@@ -319,14 +325,18 @@ class Products extends CI_Controller
 
 	}
 
-	private function add_to_cart($item_ID, $count)
+	private function add_to_cart($item_ID, $count,$val)
 	{
 		if($this->Products_Model->CountProductItems($item_ID) >= $count)
 		{
 
 			$this->load->model("Cart_Model");
 			$this->Cart_Model->AddNewItemToCart($item_ID, $count);
-			header('Location: /index.php/Products?ShowProduct='.$item_ID.'');
+
+			if($val == 0)
+				header('Location: /index.php/Products?ShowProduct='.$item_ID.'');
+			else
+				header('Location: /index.php/Cart');
 
 		}
 		else

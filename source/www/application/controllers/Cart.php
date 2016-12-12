@@ -56,6 +56,26 @@ class Cart extends CI_Controller
 			header('Location: /index.php/Cart');
 		}
 
+		if(isset($_GET["clear_cart"]))
+		{
+			$this->load->model("Cart_Model");
+			$this->Cart_Model->ClearCart();
+			header('Location: /index.php/Cart');
+		}
+		if(isset($_GET["complete"]))
+		{
+			$this->load->model("Cart_Model");
+			$this->Cart_Model->ClearCart();
+			header('Location: /index.php/Cart?transaction_complete');
+			
+		}
+		if(isset($_GET["transaction_complete"]))
+		{
+			$this->load->view("content/checkout_success");
+		}
+
+
+
 		if(isset($_GET["ZmienIlosc"]))
 		{
 			if($this->ChangeProductCount($_GET["product_id"],$_GET["Value"]))
@@ -122,12 +142,9 @@ class Cart extends CI_Controller
 
 					if($this->FinalizeTransaction())
 						{
-
-							$this->load->view("content/checkout_success");
+							header('Location: /index.php/Cart?complete');
 							return 1;
 						}
-
-
 
 				}
 
@@ -211,7 +228,7 @@ class Cart extends CI_Controller
 
 					$Payment_ID =  $this->Transaction_Model->AddNewPayment($this->SessionManager_Model->GetUserID(), 
 						$date->getTimestamp(),
-						$payment->opcja
+						$_POST["opcjaprzesylki"]
 						);
 
 
@@ -236,7 +253,6 @@ class Cart extends CI_Controller
 
 					$this->load->model("UserManagement_Model");
 
-
 					$this->Transaction_Model->SendTransactionMail(
 					$this->UserManagement_Model->GetMailAddressFromUserID($this->SessionManager_Model->GetUserID()),
 					$Payment_ID);
@@ -258,6 +274,14 @@ class Cart extends CI_Controller
 
 		return 0;
 
+	}
+
+
+	public function test()
+	{
+
+		$this->load->model("Transaction_Model");
+		$this->Transaction_Model->SendTransactionMail("Mail@wp.pl",39);
 	}
 
 
