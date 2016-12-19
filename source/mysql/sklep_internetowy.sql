@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Czas generowania: 05 Gru 2016, 19:50
+-- Czas generowania: 19 Gru 2016, 19:05
 -- Wersja serwera: 5.7.9
 -- Wersja PHP: 5.6.16
 
@@ -52,6 +52,39 @@ CREATE TABLE IF NOT EXISTS `category` (
 -- --------------------------------------------------------
 
 --
+-- Struktura tabeli dla tabeli `comments`
+--
+
+DROP TABLE IF EXISTS `comments`;
+CREATE TABLE IF NOT EXISTS `comments` (
+  `ID` int(20) NOT NULL AUTO_INCREMENT,
+  `user_id` int(20) NOT NULL,
+  `product_id` int(20) NOT NULL,
+  `comment` varchar(500) COLLATE utf8_unicode_ci NOT NULL,
+  `product_quality` int(3) NOT NULL,
+  `service_quality` int(3) NOT NULL,
+  `speed_service` int(3) NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `delivery_options`
+--
+
+DROP TABLE IF EXISTS `delivery_options`;
+CREATE TABLE IF NOT EXISTS `delivery_options` (
+  `ID` int(10) NOT NULL AUTO_INCREMENT,
+  `nazwa_przesylki` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
+  `koszt` float NOT NULL,
+  `opcja` int(3) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktura tabeli dla tabeli `login_session`
 --
 
@@ -78,6 +111,39 @@ CREATE TABLE IF NOT EXISTS `password_reset` (
   `expiration_time` int(32) NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM AUTO_INCREMENT=36 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `payments`
+--
+
+DROP TABLE IF EXISTS `payments`;
+CREATE TABLE IF NOT EXISTS `payments` (
+  `ID` int(20) NOT NULL AUTO_INCREMENT,
+  `user_id` int(20) NOT NULL,
+  `payment_status` int(3) NOT NULL DEFAULT '0',
+  `buy_time` int(40) NOT NULL,
+  `delivery_id` int(3) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM AUTO_INCREMENT=106 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `payments_products`
+--
+
+DROP TABLE IF EXISTS `payments_products`;
+CREATE TABLE IF NOT EXISTS `payments_products` (
+  `ID` int(30) NOT NULL AUTO_INCREMENT,
+  `payment_id` int(30) NOT NULL,
+  `product_name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `product_cost` float NOT NULL,
+  `product_count` int(20) NOT NULL,
+  `commented` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM AUTO_INCREMENT=109 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -146,7 +212,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `registered` tinyint(1) DEFAULT '0',
   `account_type` int(3) DEFAULT '0',
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=56 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=57 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
