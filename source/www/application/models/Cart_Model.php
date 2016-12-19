@@ -9,7 +9,10 @@ class Cart_Model extends CI_Model
 	public function AddNewItemToCart($ID, $Count)
 	{
 
-		setcookie("product_cart[$ID]", $Count);
+	if(setcookie("product_cart[$ID]", $Count))
+		return 1;
+
+	return 0;
 
 	}
 
