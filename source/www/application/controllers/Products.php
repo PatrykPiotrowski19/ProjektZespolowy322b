@@ -86,6 +86,67 @@ class Products extends CI_Controller
 		}
 
 		$this->load->model("Cart_Model");
+		$this->load->model("Comments_Model");
+
+
+		//Pobieranie komentarzy na temat produktów
+		$result_comments = $this->Comments_Model->GetCommentsFromProduct($ID);
+
+		if(!is_numeric($result_comments))
+		{
+			$arg["comments"] = $result_comments;
+
+		}
+		else
+		{
+			$arg["comments"] = null;
+		}
+		//KONIEC -> Pobieranie komentarzy na temat produktów
+
+		$arg["insert_comments"] = false;
+		//Sprawdza czy mozna dodac komentarze
+
+		if($this->SessionManager_Model->IsLogged())
+		{
+			$User_ID = $this->SessionManager_Model->GetUserID();
+
+			if($this->Comments_Model->CanInsertComment($result->nazwa_produktu, $User_ID))
+			{
+
+				if(isset($_POST["send_comment"]))
+				{
+					$jakosc_produktu = $_POST["val1"];
+					$jakosc_obslugi = $_POST["val2"];
+					$szybkosc_obslugi = $_POST["val3"];
+
+					$kom = addslashes($_POST["description"]);
+
+					if(strlen($kom) < 500 && strlen($kom) > 5)
+					{
+						if($this->Comments_Model->SetComment($result->ID,
+							$result->nazwa_produktu,
+							$User_ID, 
+							$jakosc_produktu, 
+							$jakosc_obslugi, 
+							$szybkosc_obslugi,
+							$kom
+							))
+							header('Location: /index.php/Products?ShowProduct='.$result->ID);
+
+
+					}
+					else
+						$arg["invalid_comment"] = true;
+				}
+
+				$arg["insert_comments"] = true;
+			}
+
+		}
+		//KONIEC -> Sprawdza czy mozna dodac komentarze
+
+
+		//Przekazywanie zmiennych na temat produktu
 
 		$arg["ID"] = $result->ID;
 		$arg["nazwa"] = $result->nazwa_produktu;
@@ -98,6 +159,8 @@ class Products extends CI_Controller
 
 		$result2 = $this->Products_Model->GetImageUrl($arg["ID"]);
 		$arg["img"] = $result2;
+
+		//KONIEC -> Przekazywanie zmiennych na temat produktu
 
 		$this->load->view("product_info",$arg);
 
@@ -166,7 +229,6 @@ class Products extends CI_Controller
 		}
 
 	}
-
 
 	private function insert_product()
 	{

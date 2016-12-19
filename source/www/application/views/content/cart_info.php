@@ -18,7 +18,7 @@ $sum = 0;
 	while(isset($img_url[$i]))
 	{
 		echo '<tr style="color:white;"><td><img align="center" width="80" src="'.$img_url[$i].'"></td><td style="font-size: 22px;">'.$product_name[$i].'</td><td>'.$product_cost[$i].'zł</td><td><font style="font-size:35px; color:green;">'.$product_count[$i].'</font>
-			<form action="/index.php/Cart?remove" method="GET">
+			<form action="/index.php/Cart" method="GET">
 			Zmien ilość<br><br><input type="number" min="1" value="'.$product_count[$i].'" style="width:40px;" name="Value">
 			<input type="hidden" value="'.$product_id[$i].'" name="product_id">
 			<input type="submit" value="Nowa ilość" name="ZmienIlosc">

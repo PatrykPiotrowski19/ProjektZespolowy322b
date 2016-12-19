@@ -82,12 +82,75 @@ else
 <tr><td></td><td align="left" style="color:white; font-size:22px;">Opis produktu:</td></tr>
 <tr><td></td><td align="left" width="400" style="color:white; font-size:16px;"><?php echo $opis ?></td></tr>
 </table>
-
-
-<div id="tak" width="230" height="230" style="background-color: white;">
-
 </div>
+</center>
+</td>
+</tr>
+</div>
+<div id="tak" width="230" height="230" style="background-color: white;">
+</div>
+<?php
 
+if($insert_comments == true)
+{
+
+?>
+<table width="750" style="padding: 100px 0px 0px 0px;">
+
+<?php
+
+	if(isset($invalid_comment))
+	{
+		echo '<tr><td><font size="3" color="red"><div id="notify_small_red"><p>BŁĄD. Pole tekstowe komentarza musi zawierać 5-500 znaków</p></div></font></td></tr>';
+	}
+
+?>
+
+<tr><td width="320"><p><font style="font-size:22px; color:#ffff00; padding: 0px 0px 0px 0px; ">Wystaw komentarz</p></td></tr>
+<tr><td>
+<form action="/index.php/Products?ShowProduct=<?php echo $ID;?>" method="POST"><font color="white">
+<p>Oceń jakość produktu: <input type="number" name="val1" value="5" min="1" max="10"></p>
+<p>Oceń jakość obsługi: <input type="number" name="val2" value="5" min="1" max="10"></p>
+<p>Oceń szybkość obsługi: <input type="number" name="val3" value="5" min="1" max="10"></p>
+<p>Komentarz: </p><textarea id="description" name="description" rows="3" cols="40"></textarea><br>
+<input type="submit" name="send_comment" value="Wyślij"></input>
+
+</font>
+</td></tr>
+</form>
+</table>
+<?php
+}
+?>
+<table width="750">
+<tr><td></td></tr>
+<tr><td><p style="color:#00ff42; font-size:22px;">Komentarze i oceny</p></td></tr>
+<?php
+//Wyswietlanie komentarzy
+if($comments != null)
+foreach($comments as $i)
+{
+echo '<tr><td width="10" style="background-color:#001130"></td></tr><tr><td>
+<p align="left" style="color:white; font-size:14px;">
+
+
+
+Wystawił: '.$i->LOGIN.'</p><i>
+<p align="left" style="color:white; font-size:12px;">Jakość produktu: '.$i->product_quality.'<br>
+Jakość obsługi: '.$i->service_quality.'<br>
+Szybkość obsługi: '.$i->speed_service.'<br>
+</i></p>
+<p p align="left" style="color:white; font-size:14px;">Opis: '.$i->comment.'<br>
+
+</p>
+</td></tr>';
+}
+else
+{
+	echo '<tr><td><p><font size="3" color="red">Brak komentarzy</font></p></td></tr>';
+}
+?>
+</table>
 <?php
 }
 
