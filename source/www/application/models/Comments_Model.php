@@ -35,6 +35,37 @@ class Comments_Model extends CI_Model{
 	}
 
 
+	public function IsPendingCommentExist($Comment_Token)
+	{
+		$Comment_Token = addslashes($Comment_Token);
+
+		$query = $this->db->query("SELECT * FROM `pending_comments` WHERE `comment_token` = '".$Comment_Token."'");
+		if($query->num_rows() > 0)
+		{
+
+			foreach ($query->result() as $result) {
+
+				return $result;
+
+			}
+
+
+		}
+		return false;
+
+	}
+
+
+	public function RemovePendingCommand($Comments_Token)
+	{
+		$Comments_Token = addslashes($Comments_Token);
+
+		$this->db->query("DELETE FROM `pending_comments` WHERE `comment_token` = '".$Comments_Token."' ;");
+
+	}
+
+
+
 	public function CanInsertComment($Product_Name, $User_ID)
 	{
 
@@ -75,7 +106,6 @@ class Comments_Model extends CI_Model{
 
 
 	public function SetComment($Product_ID,
-		$Product_Name,
 		$User_ID,
 		$jakosc_produktu, 
 		$jakosc_obslugi, 
@@ -87,15 +117,6 @@ class Comments_Model extends CI_Model{
 	{
 
 		$Product_Name = addslashes($Product_Name);
-
-
-		$result = $this->GetPaymentID($Product_Name,$User_ID);
-
-		foreach ($result as $row) {
-
-			$this->db->query("UPDATE `payments_products` SET `commented` = '1' WHERE `payments_products`.`ID` = ".$row->ID.";");
-
-		}
 
 		$this->db->query("
 		INSERT INTO `comments` (

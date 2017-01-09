@@ -231,6 +231,7 @@ class Cart extends CI_Controller
 						$_POST["opcjaprzesylki"]
 						);
 
+					$k = 0;
 
 					foreach($_COOKIE['product_cart'] as $name=> $value)
 					{
@@ -247,6 +248,9 @@ class Cart extends CI_Controller
 						$value
 						);
 
+						$tokens[$k++] =$this->Transaction_Model->CreateNewPendingComments($ID, $this->SessionManager_Model->GetUserID());
+
+
 						$this->Products_Model->RemoveItemsInProduct($product_inf->ID, $value);
 
 					}
@@ -255,7 +259,7 @@ class Cart extends CI_Controller
 
 					$this->Transaction_Model->SendTransactionMail(
 					$this->UserManagement_Model->GetMailAddressFromUserID($this->SessionManager_Model->GetUserID()),
-					$Payment_ID);
+					$Payment_ID, $tokens);
 
 
 					return 1;

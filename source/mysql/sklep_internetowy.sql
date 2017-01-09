@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Czas generowania: 19 Gru 2016, 19:05
+-- Czas generowania: 09 Sty 2017, 13:40
 -- Wersja serwera: 5.7.9
 -- Wersja PHP: 5.6.16
 
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `comments` (
   `service_quality` int(3) NOT NULL,
   `speed_service` int(3) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS `payments` (
   `buy_time` int(40) NOT NULL,
   `delivery_id` int(3) NOT NULL DEFAULT '1',
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=106 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=109 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -143,7 +143,22 @@ CREATE TABLE IF NOT EXISTS `payments_products` (
   `product_count` int(20) NOT NULL,
   `commented` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=109 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=114 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `pending_comments`
+--
+
+DROP TABLE IF EXISTS `pending_comments`;
+CREATE TABLE IF NOT EXISTS `pending_comments` (
+  `ID` int(20) NOT NULL AUTO_INCREMENT,
+  `comment_token` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `product_id` int(20) NOT NULL,
+  `user_id` int(20) NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 

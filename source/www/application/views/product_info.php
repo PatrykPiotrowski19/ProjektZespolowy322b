@@ -108,16 +108,6 @@ if($insert_comments == true)
 
 <tr><td width="320"><p><font style="font-size:22px; color:#ffff00; padding: 0px 0px 0px 0px; ">Wystaw komentarz</p></td></tr>
 <tr><td>
-<form action="/index.php/Products?ShowProduct=<?php echo $ID;?>" method="POST"><font color="white">
-<p>Oceń jakość produktu: <input type="number" name="val1" value="5" min="1" max="10"></p>
-<p>Oceń jakość obsługi: <input type="number" name="val2" value="5" min="1" max="10"></p>
-<p>Oceń szybkość obsługi: <input type="number" name="val3" value="5" min="1" max="10"></p>
-<p>Komentarz: </p><textarea id="description" name="description" rows="3" cols="40"></textarea><br>
-<input type="submit" name="send_comment" value="Wyślij"></input>
-
-</font>
-</td></tr>
-</form>
 </table>
 <?php
 }
@@ -132,7 +122,6 @@ foreach($comments as $i)
 {
 echo '<tr><td width="10" style="background-color:#001130"></td></tr><tr><td>
 <p align="left" style="color:white; font-size:14px;">
-
 
 
 Wystawił: '.$i->LOGIN.'</p><i>

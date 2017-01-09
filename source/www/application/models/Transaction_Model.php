@@ -114,7 +114,7 @@ class Transaction_Model extends CI_Model
 	}
 
 
-	public function SendTransactionMail($Mail_address, $Transaction_ID)
+	public function SendTransactionMail($Mail_address, $Transaction_ID, $CommentToken)
 	{
 		$this->load->model("SessionManager_Model");
 
@@ -132,14 +132,16 @@ class Transaction_Model extends CI_Model
 		$suma += $delivery_info->koszt;
 
 		$string_message = $string_message."<table border='1' style='background-color:silver;'>
-		<td align='center' width='240'><b>Nazwa przedmiotu</b></td><td width='80' align='center'><b>Cena</b></td><td align='center' width='100'><b>Ilość sztuk</b></td><td width='80' align='center'><b>Razem</b></td></tr>
+		<td align='center' width='240'><b>Nazwa przedmiotu</b></td><td width='80' align='center'><b>Cena</b></td><td align='center' width='100'><b>Ilość sztuk</b></td><td width='80' align='center'><b>Razem</b></td><td width='120' align='center'><b>Wystaw komentarz</b></td></tr>
 
 		";
+
+		$k = 0;
 
 		foreach($result as $res)
 		{
 
-			$string_message = $string_message."<tr><td align='center'>".$res->product_name."</td><td align='center'>".$res->product_cost." zł</td><td align='center'>".$res->product_count." szt</td><td align='center'>".$res->product_cost*$res->product_count." zł</td></tr>";
+			$string_message = $string_message."<tr><td align='center'>".$res->product_name."</td><td align='center'>".$res->product_cost." zł</td><td align='center'>".$res->product_count." szt</td><td align='center'>".$res->product_cost*$res->product_count." zł</td><td align='center'><a href='322b.esy.es/index.php/Comments?add_comment=".$CommentToken[$k++]."'>Komentarz</a></td></tr>";
 
 			$suma = $suma + $res->product_count * $res->product_cost;
 		}
@@ -176,7 +178,28 @@ class Transaction_Model extends CI_Model
 		$this->email->send();
 
 
+	}
 
+	public function CreateNewPendingComments($Product_ID, $User_ID)
+	{
+
+		$token = md5(uniqid($User_ID, true));
+
+
+		$query = $this->db->query("INSERT INTO `pending_comments` 
+			(
+			`ID`, 
+			`comment_token`, 
+			`product_id`, 
+			`user_id`) VALUES (
+			NULL, 
+			'".$token."', 
+			'".$Product_ID."', 
+			'".$User_ID."'
+			);");
+
+
+		return $token;
 
 	}
 

@@ -104,8 +104,10 @@ class Products extends CI_Controller
 		//KONIEC -> Pobieranie komentarzy na temat produktów
 
 		$arg["insert_comments"] = false;
+		
 		//Sprawdza czy mozna dodac komentarze
 
+		/* Dodawanie komentarzy na stronie produktu -> WYŁĄCZONE
 		if($this->SessionManager_Model->IsLogged())
 		{
 			$User_ID = $this->SessionManager_Model->GetUserID();
@@ -143,6 +145,7 @@ class Products extends CI_Controller
 			}
 
 		}
+		*/
 		//KONIEC -> Sprawdza czy mozna dodac komentarze
 
 
