@@ -203,6 +203,20 @@ class Transaction_Model extends CI_Model
 
 	}
 
+	public function GetTransactionsByUserID($User_ID)
+	{
+
+		$query = $this->db->query("SELECT * FROM `payments` WHERE `user_id` = ".$User_ID."");
+
+		if($query->num_rows() > 0)
+		{
+
+			return $query->result();
+
+		}
+		return 0;
+	}
+
 
 
 }

@@ -201,10 +201,18 @@ class Products_Model extends CI_Model
 	}
 
 
-	public function ShowProductList($ID, $Maximum)
+	public function ShowProductList($ID, $Maximum, $Filters)
 	{
 		if(is_numeric($ID) && is_numeric($Maximum))
 		{
+			$additional_query_cost = "";
+
+			if(is_numeric($Filters["cost_min"]) && is_numeric($Filters["cost_max"]))
+			{
+				$additional_query_cost = " AND (product.cena_produktu) >= ".$Filters['cost_min']." AND (product.cena_produktu) <= ".$Filters['cost_max'];
+
+			}
+
 
 			$query = $this->db->query("SELECT 
 				product.ID,
@@ -216,7 +224,7 @@ class Products_Model extends CI_Model
 			WHERE ((
 			(product_image.image_id)=1)
 			AND 
-			(product.podkategoria_id) = ".$ID.") LIMIT ".$Maximum.";");
+			(product.podkategoria_id) = ".$ID." ".$additional_query_cost." AND (product.ilosc) > 0 );");
 
 		if($query->num_rows() > 0)
 		{
@@ -404,6 +412,8 @@ class Products_Model extends CI_Model
 			'".$Product_Description."'
 			);");
 
+		$return_ID = $this->db->insert_id();
+
 		//Tymczasowa opcja dodawania zdjec
 
 		$Product_ID = $this->GetProductIDByName($Product_Name);
@@ -416,6 +426,9 @@ class Products_Model extends CI_Model
 			$this->InsertNewImage($Product_ID, 3, $image3);
 		if(!empty($image4))
 			$this->InsertNewImage($Product_ID, 4, $image4);
+
+
+		return $return_ID;
 
 	}
 

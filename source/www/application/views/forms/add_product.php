@@ -1,7 +1,46 @@
 <center>
 <br>
-<div class="reformed-form" style="background-color: silver;width: 500px; height:880px;text-align: center;
+<div class="reformed-form" style="background-color: silver;width: 600px; text-align: center;
 ">
+<script type='text/javascript'>
+
+        var values = 0;
+
+
+
+        function addFields(){
+            // Number of inputs to create
+            var number = document.getElementById("keys").value;
+
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("container");
+            // Clear previous contents of the container
+            while (container.hasChildNodes()) {
+              break;
+            }
+
+                // Append a node with a random text
+                container.appendChild(document.createTextNode("Klucz " + (values+1) + ": "));
+                // Create an <input> element, set its type and name attributes
+                var input = document.createElement("input");
+                input.type = "text";
+                input.name = "filter_name[]";
+                input.value = "Wpisz klucz";
+                container.appendChild(input);
+                // Append a line break 
+                container.appendChild(document.createTextNode("Wartość " + (values+1) + ": "));
+
+                var input = document.createElement("input");
+                input.type = "text";
+                input.name = "filter_value[]";
+                input.value = "Podaj wartość";
+                container.appendChild(input);
+                container.appendChild(document.createElement("br"));
+                values = values + 1;
+                document.getElementById("keys").value = values;
+
+        }
+    </script>
 <p><font size="6">Dodawanie przedmiotu</font></p>
   <form method="post" name="DodawanieProduktu" id="DodawanieProduktu" action="/index.php/Products?AddNewProduct" enctype="multipart/form-data">
     <dl>
@@ -31,6 +70,15 @@
       <dd><center><input type="number" id="Ilosc" class="digits" name="Ilosc" min="1"  value="<?php echo $Ilosc; ?>" /></center></dd>
     </dl>
     <dl>
+
+    
+    <div id="container"/>
+
+    </div>
+
+
+    <input type="hidden" id="keys" name="keys" value="0" style="width:40px;"><a href="#" id="filldetails" onclick="addFields()">Dodaj nowy klucz</a></p>
+
       <dt>
         <label for="Ilosc">Cena</label>
       </dt>

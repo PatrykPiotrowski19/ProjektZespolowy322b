@@ -11,6 +11,7 @@ class Products extends CI_Controller
 		$this->load->model("SessionManager_Model");
 		$this->load->model("MainPage_Model");
 		$this->load->model("Products_Model");
+		$this->load->model("Filter_Model");
 
 
 		if(isset($_GET["Success"]))
@@ -170,6 +171,7 @@ class Products extends CI_Controller
 		return 1;
 	}
 
+
 	private function show_category($Category_ID)
 	{
 
@@ -204,10 +206,45 @@ class Products extends CI_Controller
 	{
 		if($this->Products_Model->SubcategoryExist($Category_ID))
 		{
+			if(empty($_GET["cost_min"])) $_GET["cost_min"] = 0;
+			if(empty($_GET["cost_max"])) $_GET["cost_max"] = 999999;
+
+
+			$Filters["cost_min"] = $_GET["cost_min"];
+			$Filters["cost_max"] = $_GET["cost_max"];
+
+
+			if($Filters["cost_min"] > $Filters["cost_max"])
+			{
+				$tmp = $Filters["cost_min"];
+				$Filters["cost_min"] = $Filters["cost_max"];
+				$Filters["cost_max"] = $tmp;
+			}
+
+			$filter_info = 0;
+
+			if(!empty($_GET["Filter"]))
+			{
+				$filter_info = $_GET["Filter"];
+
+			}
 
 
 
-			$result = $this->Products_Model->ShowProductList($Category_ID, 25);
+
+
+			$result = $this->Products_Model->ShowProductList($Category_ID, 25,$Filters);
+
+			$result2 = $this->Filter_Model->GetFilterInfo($result);
+
+			$result3 = $this->Filter_Model->GetFilterProductInfo($filter_info);
+
+			//Poddaję dane filtrowaniu
+			if($result3 != 0)
+			{
+				$result = $this->Filter_Model->FilterProducts($result,$result3);
+			}
+
 
 			if(is_numeric($result))
 			{
@@ -219,6 +256,10 @@ class Products extends CI_Controller
 			else
 			{
 				$data['data'] = $result;
+				$data['filters'] = $result2;
+
+
+
 				$this->load->view("content/show_products",$data);
 
 				return 1;
@@ -239,6 +280,8 @@ class Products extends CI_Controller
 		//Jezeli uzytkownik ma uprawnienia
 		if($this->SessionManager_Model->IsAdmin())
 		{
+
+
 			$this->load->view("forms_err2",$arg);
 
 			$errors = 0;
@@ -349,8 +392,11 @@ class Products extends CI_Controller
 			//Dodaję nowy produkt do bazy danych
 		if($errors == 0 && $_POST["DodajPrzedmiot"] == "DodajPrzedmiot")
 		{
+			$this->load->model("Filter_Model");
 
-				$this->Products_Model->InsertProductToDatabase(
+
+
+			$Product_ID = $this->Products_Model->InsertProductToDatabase(
 			$_POST["Podkategoria"],
 			$_POST["NazwaPrzedmiotu"],
 			$_POST["Cena"],
@@ -361,6 +407,30 @@ class Products extends CI_Controller
 			$_POST["Zdjecie3"],
 			$_POST["Zdjecie4"]
 			);
+
+
+
+			$iterations = $_POST["keys"];
+			if(is_numeric($iterations))
+			{
+
+				$this->load->model("Filter_Model");
+				
+				for($i=0;$i<$iterations;$i++)
+				{
+					if(!empty($_POST["filter_name"][$i]) && !empty($_POST["filter_value"][$i]))
+					{
+
+						$this->Filter_Model->AddNewValues($_POST["filter_name"][$i], $_POST["filter_value"][$i], $Product_ID);
+
+					}
+				}
+
+
+			}
+
+
+
 
 				header('Location: /index.php/Products?Success');
 			}
