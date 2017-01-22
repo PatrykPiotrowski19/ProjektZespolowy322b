@@ -75,7 +75,7 @@ class MainPage_Model extends CI_Model
 
 				}
 
-				$tag["custom_tag"] = '<li><a href="/index.php/UserManagement?Logout">Wyloguj się</a></li>';
+				$tag["custom_tag"] = '<li><a id="button" href="/index.php/UserManagement?Transactions">Moje transakcje</a></li><li><a href="/index.php/UserManagement?Logout">Wyloguj się</a></li>';
 				$this->load->view("custom_tag",$tag);
 			}
 			else
@@ -86,6 +86,7 @@ class MainPage_Model extends CI_Model
 			}
 			
 	}
+
 
 	public function GetGroupIDByUsername($username)
 	{

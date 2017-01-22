@@ -24,7 +24,7 @@ class Transaction_Model extends CI_Model
 				) VALUES (
 				NULL, 
 				'".$User_ID."', 
-				'0', 
+				'1', 
 				'".$Timestamp."',
 				'".$Payment_ID."'
 				);");
@@ -217,6 +217,40 @@ class Transaction_Model extends CI_Model
 		return 0;
 	}
 
+
+	public function GetTransactionsInfoByUserID($User_ID)
+	{
+		$query = $this->db->query("SELECT payments.ID, payments.buy_time, payment_status.name FROM payments INNER JOIN payment_status ON payments.payment_status = payment_status.ID WHERE payments.user_id = ".$User_ID." order by payments.ID ;");
+
+		if($query->num_rows() > 0)
+		{
+
+			return $query->result();
+
+		}
+		return 0;
+
+	}
+
+	public function GetTransactionInfoByUserIDAndTransactionID($User_ID, $Transaction_ID)
+	{
+		if(is_numeric($User_ID) && is_numeric($Transaction_ID))
+		{
+			//Czy uzytkownik posiada uprawnienia
+			$query = $this->db->query("SELECT payments.ID, payments.buy_time, payment_status.name FROM payments INNER JOIN payment_status ON payments.payment_status = payment_status.ID WHERE payments.user_id = ".$User_ID." AND payments.ID = ".$Transaction_ID." order by payments.ID ;");
+
+			if($query->num_rows() > 0)
+			{
+				$query2 = $this->db->query("SELECT * FROM `payments_products` WHERE `payment_id` = ".$Transaction_ID." ;");
+
+				return $query2->result();
+
+			}
+			return 0;
+
+		}
+		return 0;
+	}
 
 
 }

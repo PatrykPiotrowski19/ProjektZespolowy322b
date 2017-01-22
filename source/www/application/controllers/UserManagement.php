@@ -30,8 +30,12 @@ class UserManagement extends CI_Controller
 		if($this->SessionManager_Model->IsLogged())
 		{
 
-			$this->profile_management();
+			if(isset($_GET["Transactions"]))
+			{
 
+				$this->show_transactions();
+
+			}
 			
 		if(isset($_GET["Logout"]))
 		{
@@ -46,30 +50,38 @@ class UserManagement extends CI_Controller
 
 
 
-			if(isset($_GET["reset"])){
+			if(isset($_GET["reset"]))
+			{
+
 				$this->reset_password2();
+
 			}
 
 
-			if(isset($_GET["Login"])){
+
+			if(isset($_GET["Login"]))
+			{
 
 				$this->login_attempt();
 
 			}
 
-			if(isset($_GET["ResetPassword"])){
+			if(isset($_GET["ResetPassword"]))
+			{
 
 				$this->reset_password();
 
 			}
 
-			if(isset($_GET["Register"])){
+			if(isset($_GET["Register"]))
+			{
 
 				$this->register_attempt();
 			}
 
 
-			if(isset($_GET["activation"])){
+			if(isset($_GET["activation"]))
+			{
 
 				$this->activate_user();
 			}
@@ -78,8 +90,29 @@ class UserManagement extends CI_Controller
 	}
 
 
-	private function profile_management()
+	private function show_transactions()
 	{
+
+		$this->load->model("Transaction_Model");
+
+
+	if(!isset($_GET["View"]))
+	{
+
+	$result["info"] = $this->Transaction_Model->GetTransactionsInfoByUserID($this->SessionManager_Model->GetUserId());
+
+	$this->load->view("content/transaction_info",$result);
+
+	}
+	else
+	{
+		$result["info"] = $this->Transaction_Model->GetTransactionInfoByUserIDAndTransactionID($this->SessionManager_Model->GetUserId(), $_GET["View"]);
+
+	$this->load->view("content/transaction_info2", $result);
+
+	}
+
+
 
 	}
 
@@ -436,6 +469,11 @@ class UserManagement extends CI_Controller
 				        		$arg['info'] = 'Konto zostało pomyślnie utworzone';
 				  				$this->load->view('forms_info',$arg);
 
+				        $user_id = $this->UserManagement_Model->GetUserId($this->username);
+
+				            $this->UserManagement_Model->SetActivationCode($user_id,$register_mail);
+
+
 				  				return 1; 
 				  		}	
 				        else{
@@ -443,9 +481,7 @@ class UserManagement extends CI_Controller
 				        		return;
 				        }
 
-				        $user_id = $this->UserManagement_Model->GetUserId($this->username);
 
-				            $this->UserManagement_Model->SetActivationCode($user_id,$register_mail);
 
 				        }
 

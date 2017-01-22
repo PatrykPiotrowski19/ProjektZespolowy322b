@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Czas generowania: 09 Sty 2017, 13:40
+-- Czas generowania: 22 Sty 2017, 14:10
 -- Wersja serwera: 5.7.9
 -- Wersja PHP: 5.6.16
 
@@ -85,6 +85,33 @@ CREATE TABLE IF NOT EXISTS `delivery_options` (
 -- --------------------------------------------------------
 
 --
+-- Struktura tabeli dla tabeli `filter`
+--
+
+DROP TABLE IF EXISTS `filter`;
+CREATE TABLE IF NOT EXISTS `filter` (
+  `ID` int(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `filter_value`
+--
+
+DROP TABLE IF EXISTS `filter_value`;
+CREATE TABLE IF NOT EXISTS `filter_value` (
+  `ID` int(30) NOT NULL AUTO_INCREMENT,
+  `filter_ID` int(30) NOT NULL,
+  `value` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM AUTO_INCREMENT=38 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktura tabeli dla tabeli `login_session`
 --
 
@@ -110,7 +137,7 @@ CREATE TABLE IF NOT EXISTS `password_reset` (
   `CODE` varchar(40) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
   `expiration_time` int(32) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=36 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=41 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -126,7 +153,7 @@ CREATE TABLE IF NOT EXISTS `payments` (
   `buy_time` int(40) NOT NULL,
   `delivery_id` int(3) NOT NULL DEFAULT '1',
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=109 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=110 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -143,7 +170,20 @@ CREATE TABLE IF NOT EXISTS `payments_products` (
   `product_count` int(20) NOT NULL,
   `commented` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=114 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=115 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `payment_status`
+--
+
+DROP TABLE IF EXISTS `payment_status`;
+CREATE TABLE IF NOT EXISTS `payment_status` (
+  `ID` int(30) NOT NULL AUTO_INCREMENT,
+  `name` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -158,7 +198,7 @@ CREATE TABLE IF NOT EXISTS `pending_comments` (
   `product_id` int(20) NOT NULL,
   `user_id` int(20) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -175,7 +215,22 @@ CREATE TABLE IF NOT EXISTS `product` (
   `ilosc` int(20) NOT NULL,
   `opis` varchar(4096) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=34 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `product_filter`
+--
+
+DROP TABLE IF EXISTS `product_filter`;
+CREATE TABLE IF NOT EXISTS `product_filter` (
+  `ID` int(30) NOT NULL AUTO_INCREMENT,
+  `product_ID` int(30) NOT NULL,
+  `filter_ID` int(30) NOT NULL,
+  `filter_value_ID` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -190,7 +245,7 @@ CREATE TABLE IF NOT EXISTS `product_image` (
   `image_id` int(3) NOT NULL,
   `imagename` varchar(150) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=38 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -227,7 +282,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `registered` tinyint(1) DEFAULT '0',
   `account_type` int(3) DEFAULT '0',
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=57 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=59 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

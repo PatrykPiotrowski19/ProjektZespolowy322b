@@ -144,6 +144,8 @@ class UserManagement_Model extends CI_Model
 		$this->email->from('noreply@sklepinternetowy.pl', 'Sklep internetowy');
 		$this->email->to($mail_address);
 
+		echo $mail_address;
+
 		$this->email->subject('Aktywacja konta');
 
 		$this->email->message('Witaj <b>'.$row->LOGIN.'</b>.<br>Link do zakonczenia rejestracji : <i><a href="http://322b.esy.es/index.php/UserManagement?activation='.$activation_code.'">KLIKNIJ TUTAJ</a></i><br>Po 7 dniach link wygasa a konto zostaje usunięte.<br>');
@@ -252,14 +254,16 @@ class UserManagement_Model extends CI_Model
 
 	public function ResetPasswordSendMail($mail, $token, $activate_time_in_hours)
 	{
+
+
 		$this->load->library('email');
 		$this->email->set_mailtype("html");
 
 		$this->email->from('noreply@sklepinternetowy.pl', 'Sklep internetowy');
-		$this->email->to($row->ADDRESS_TAB2);
+		$this->email->to($mail);
 
 		$this->email->subject('Reset hasła.');
-		$this->email->message('Witaj <b>'.$row->LOGIN.'</b>.<br>Do resetowania hasła: <i>http://322b.esy.es/index.php/UserManagement?reset='.$token.'</i><br>Link wygasa po upływie '.$activate_time_in_hours.' godzin.<br>');
+		$this->email->message('Witaj <b>'.$row->LOGIN.'</b>.<br>Do resetowania hasła: <i>http://322b.esy.es/index.php/UserManagement?reset='.$token.'</i><br>Link wygasa po upływie 24 godzin.<br>');
 
 		$this->email->send();
 	}
